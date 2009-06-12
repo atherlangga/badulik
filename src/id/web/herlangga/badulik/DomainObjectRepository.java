@@ -22,14 +22,4 @@ public interface DomainObjectRepository {
 	 * @return Domain Object {@link Structure}.
 	 */
 	public Structure getStructure();
-
-	/**
-	 * Get attributes of {@link Type} and its value for particular Domain Object
-	 * ID.
-	 * 
-	 * @param domainObjectID
-	 *            Domain Object ID.
-	 * @return array of {@link AttributeValuePair}s.
-	 */
-	public AttributeValuePair[] getAttributeValuePairsFor(long domainObjectID);
 }
