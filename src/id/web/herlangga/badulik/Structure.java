@@ -56,4 +56,20 @@ public class Structure {
 
 		return null;
 	}
+	
+	public int getNumberOf(String name) {
+		int total = attributes.size();
+		
+		int count = 0;
+		while (count < total) {
+			Attribute a = (Attribute) attributes.elementAt(count);
+			if (a.getName() == name) {
+				return count;
+			}
+			
+			count++;
+		}
+		
+		return -1;
+	}
 }
