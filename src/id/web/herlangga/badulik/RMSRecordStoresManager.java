@@ -93,13 +93,14 @@ public final class RMSRecordStoresManager {
 
 	private static boolean recordStoreIsNotExist(String name) {
 		String[] existingRecordStores = RecordStore.listRecordStores();
-		int count = existingRecordStores.length;
-		for (int i = 0; i < count; i++) {
-			if (name == existingRecordStores[i]) {
-				return false;
+		if (existingRecordStores != null) {
+			int count = existingRecordStores.length;
+			for (int i = 0; i < count; i++) {
+				if (name == existingRecordStores[i]) {
+					return false;
+				}
 			}
 		}
-
 		return true;
 	}
 }
