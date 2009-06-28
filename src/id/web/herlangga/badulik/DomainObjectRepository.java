@@ -13,6 +13,7 @@ public interface DomainObjectRepository {
 	 * use method RMSRecordStoresManager.isExist().
 	 * 
 	 * @return Unique name of the Repository.
+	 * @see RMSRecordStoresManager.
 	 */
 	public String getName();
 
