@@ -9,7 +9,7 @@ public class Structure {
 		this.attributes = new Vector(5);
 	}
 
-	public void add(String name, Type type) {
+	public void add(String name, DataType type) {
 		Attribute attribute = new Attribute(name, type);
 		add(attribute);
 	}
@@ -32,12 +32,12 @@ public class Structure {
 		return a.getName();
 	}
 
-	public Type getTypeNumber(int number) {
+	public DataType getTypeNumber(int number) {
 		Attribute a = getAttributeNumber(number);
 		return a.getType();
 	}
 
-	public Type getTypeOf(String name) {
+	public DataType getTypeOf(String name) {
 		int total = attributes.size();
 
 		int count = 0;

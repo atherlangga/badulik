@@ -2,9 +2,9 @@ package id.web.herlangga.badulik;
 
 public class Attribute {
 	private String name;
-	private Type type;
+	private DataType type;
 	
-	public Attribute(String name, Type type) {
+	public Attribute(String name, DataType type) {
 		this.name = name;
 		this.type = type;
 	}
@@ -13,7 +13,7 @@ public class Attribute {
 		return name;
 	}
 
-	public final Type getType() {
+	public final DataType getType() {
 		return type;
 	}
 

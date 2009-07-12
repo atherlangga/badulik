@@ -5,7 +5,7 @@ import id.web.herlangga.badulik.AttributeValuePair;
 import id.web.herlangga.badulik.DomainObjectFactory;
 import id.web.herlangga.badulik.RepositoryHelper;
 import id.web.herlangga.badulik.Structure;
-import id.web.herlangga.badulik.Type;
+import id.web.herlangga.badulik.DataType;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,7 +37,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			DataInputStream wrapper = new DataInputStream(
 					new ByteArrayInputStream(rawData));
 			for (int i = 0; i < fieldSize; i++) {
-				Type type = Type.fromInteger(wrapper.readInt());
+				DataType type = DataType.fromInteger(wrapper.readInt());
 				Attribute attribute = objectStructure.getAttributeNumber(i);
 				Object val = readValueFrom(wrapper, type);
 
@@ -58,18 +58,18 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		throw new RuntimeException();
 	}
 
-	private Object readValueFrom(DataInputStream wrapper, Type type)
+	private Object readValueFrom(DataInputStream wrapper, DataType type)
 			throws IOException {
 		Object value = null;
-		if (type == Type.INT) {
+		if (type == DataType.INT) {
 			value = new Integer(wrapper.readInt());
-		} else if (type == Type.LONG) {
+		} else if (type == DataType.LONG) {
 			value = new Long(wrapper.readLong());
-		} else if (type == Type.STRING) {
+		} else if (type == DataType.STRING) {
 			value = wrapper.readUTF();
-		} else if (type == Type.DATE) {
+		} else if (type == DataType.DATE) {
 			value = new Date(wrapper.readLong());
-		} else if (type == Type.BOOL) {
+		} else if (type == DataType.BOOL) {
 			value = new Boolean(wrapper.readBoolean());
 		} else {
 			throw new IllegalArgumentException("Object structure is not valid");
@@ -130,7 +130,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		int dataFieldLength = data.length;
 		for (int i = 0; i < dataFieldLength; i++) {
-			Type type = data[i].getAttribute().getType();
+			DataType type = data[i].getAttribute().getType();
 			Object value = data[i].getValue();
 
 			writeTypeAndObjectTo(wrapper, type, value);
@@ -148,24 +148,24 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		}
 	}
 
-	private void writeTypeAndObjectTo(DataOutputStream wrapper, Type type,
+	private void writeTypeAndObjectTo(DataOutputStream wrapper, DataType type,
 			Object value) {
 		try {
 			wrapper.writeInt(type.toInteger());
 
-			if (type == Type.INT) {
+			if (type == DataType.INT) {
 				Integer toBeWritten = (Integer) value;
 				wrapper.writeInt(toBeWritten.intValue());
-			} else if (type == Type.LONG) {
+			} else if (type == DataType.LONG) {
 				Long toBeWritten = (Long) value;
 				wrapper.writeLong(toBeWritten.longValue());
-			} else if (type == Type.STRING) {
+			} else if (type == DataType.STRING) {
 				String toBeWritten = (String) value;
 				wrapper.writeUTF(toBeWritten);
-			} else if (type == Type.DATE) {
+			} else if (type == DataType.DATE) {
 				Date toBeWritten = (Date) value;
 				wrapper.writeLong(toBeWritten.getTime());
-			} else if (type == Type.BOOL) {
+			} else if (type == DataType.BOOL) {
 				Boolean toBeWritten = (Boolean) value;
 				wrapper.writeBoolean(toBeWritten.booleanValue());
 			}
@@ -182,7 +182,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		int dataFieldLength = data.length;
 		for (int i = 0; i < dataFieldLength; i++) {
-			Type type = data[i].getAttribute().getType();
+			DataType type = data[i].getAttribute().getType();
 			Object value = data[i].getValue();
 
 			writeTypeAndObjectTo(wrapper, type, value);

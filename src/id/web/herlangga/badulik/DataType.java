@@ -1,16 +1,16 @@
 package id.web.herlangga.badulik;
 
 
-public class Type {
-	public static final Type INT = new Type(1);
-	public static final Type LONG = new Type(2);
-	public static final Type STRING = new Type(3);
-	public static final Type DATE = new Type(4);
-	public static final Type BOOL = new Type(5);
+public class DataType {
+	public static final DataType INT = new DataType(1);
+	public static final DataType LONG = new DataType(2);
+	public static final DataType STRING = new DataType(3);
+	public static final DataType DATE = new DataType(4);
+	public static final DataType BOOL = new DataType(5);
 	
 	private int type;
 	
-	protected Type(int type) {
+	protected DataType(int type) {
 		this.type = type;
 	}
 
@@ -28,14 +28,14 @@ public class Type {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Type other = (Type) obj;
+		DataType other = (DataType) obj;
 		if (type != other.type)
 			return false;
 		return true;
 	}
 	
-	public static Type fromInteger(int integerValue) {
-		return new Type(integerValue);
+	public static DataType fromInteger(int integerValue) {
+		return new DataType(integerValue);
 	}
 	
 	public int toInteger() {
