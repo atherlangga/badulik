@@ -1,11 +1,11 @@
 package id.web.herlangga.badulik.rms;
 
-import id.web.herlangga.badulik.Attribute;
-import id.web.herlangga.badulik.AttributeValuePair;
 import id.web.herlangga.badulik.DomainObjectFactory;
 import id.web.herlangga.badulik.RepositoryHelper;
-import id.web.herlangga.badulik.Structure;
-import id.web.herlangga.badulik.DataType;
+import id.web.herlangga.badulik.definition.Attribute;
+import id.web.herlangga.badulik.definition.AttributeValuePair;
+import id.web.herlangga.badulik.definition.DataType;
+import id.web.herlangga.badulik.definition.Structure;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

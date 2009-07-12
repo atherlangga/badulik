@@ -1,5 +1,7 @@
 package id.web.herlangga.badulik;
 
+import id.web.herlangga.badulik.definition.AttributeValuePair;
+
 /**
  * Domain Object creator.
  * 

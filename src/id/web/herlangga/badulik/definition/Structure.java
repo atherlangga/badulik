@@ -1,4 +1,4 @@
-package id.web.herlangga.badulik;
+package id.web.herlangga.badulik.definition;
 
 import java.util.Vector;
 

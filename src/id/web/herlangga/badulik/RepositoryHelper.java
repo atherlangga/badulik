@@ -1,5 +1,8 @@
 package id.web.herlangga.badulik;
 
+import id.web.herlangga.badulik.definition.AttributeValuePair;
+import id.web.herlangga.badulik.definition.Structure;
+
 /**
  * Provides common functionality for Repository.
  * 
