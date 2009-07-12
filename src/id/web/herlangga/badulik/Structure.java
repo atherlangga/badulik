@@ -18,12 +18,7 @@ public class Structure {
 		if (!attributes.contains(attribute)) {
 			attributes.addElement(attribute);
 		} else {
-			try {
-				throw new Exception("Name " + attribute.getName()
-						+ " already exist.");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			throw new IllegalArgumentException("Attribute is already exists.");
 		}
 
 	}
@@ -63,7 +58,7 @@ public class Structure {
 		int count = 0;
 		while (count < total) {
 			Attribute a = (Attribute) attributes.elementAt(count);
-			if (a.getName() == name) {
+			if (a.getName().equals(name)) {
 				return count;
 			}
 			
@@ -71,5 +66,9 @@ public class Structure {
 		}
 		
 		return -1;
+	}
+	
+	public int fieldSize() {
+		return attributes.size();
 	}
 }

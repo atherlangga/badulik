@@ -1,6 +1,7 @@
 package id.web.herlangga.badulik;
 
-public final class Type {
+
+public class Type {
 	public static final Type INT = new Type(1);
 	public static final Type LONG = new Type(2);
 	public static final Type STRING = new Type(3);
@@ -9,7 +10,7 @@ public final class Type {
 	
 	private int type;
 	
-	private Type(int type) {
+	protected Type(int type) {
 		this.type = type;
 	}
 
@@ -33,5 +34,12 @@ public final class Type {
 		return true;
 	}
 	
+	public static Type fromInteger(int integerValue) {
+		return new Type(integerValue);
+	}
+	
+	public int toInteger() {
+		return type;
+	}
 	
 }

@@ -166,7 +166,7 @@ public class RMSWorker {
 	 * 
 	 * @return array contains of Domain IDs.
 	 */
-	public long[] fetchAllIDs(DomainObjectIDFactory idFactory) {
+	public long[] fetchAllIDs(DomainObjectIDScanner idFactory) {
 		long[] results = new long[0];
 
 		try {
