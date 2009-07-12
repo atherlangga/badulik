@@ -18,6 +18,6 @@ public interface DomainObjectFactory {
 	 *            Data for Domain Object.
 	 * @return Domain Object.
 	 */
-	public Object createDomainObject(long domainObjectID,
+	public Object createDomainObject(int domainObjectID,
 			AttributeValuePair[] data);
 }
