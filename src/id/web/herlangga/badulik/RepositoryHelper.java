@@ -1,7 +1,7 @@
 package id.web.herlangga.badulik;
 
 /**
- * Provides common functionality for {@link DomainObjectRepository}.
+ * Provides common functionality for Repository.
  * 
  * @author angga
  * 
