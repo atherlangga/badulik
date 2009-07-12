@@ -112,15 +112,18 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	private boolean domainObjectIsExist(int domainObjectID) {
 		try {
-			RecordEnumeration enum = storage.enumerateRecords(null, null, false);
-			while(enum.hasNextElement()) {
-				return true;
-			}
+			storage.getRecord(domainObjectID);
+			
+			return true;
 		} catch (RecordStoreNotOpenException e) {
+			e.printStackTrace();
+		} catch (InvalidRecordIDException e) {
+			return false;
+		} catch (RecordStoreException e) {
 			e.printStackTrace();
 		}
 
-		return false;
+		throw new RuntimeException("This line should be unreached.");
 	}
 
 	private void insertNewRecord(AttributeValuePair[] data) {
@@ -189,7 +192,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		byte[] rawData = writer.toByteArray();
 		try {
-			storage.setRecord(domainObjectID, rawData, 0, data.length);
+			storage.setRecord(domainObjectID, rawData, 0, rawData.length);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreFullException e) {
