@@ -1,7 +1,7 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.rms.RMSRecordStoresManager;
-import id.web.herlangga.badulik.rms.RepositoryHelperRMS;
+import id.web.herlangga.badulik.backend.rms.RMSRecordStoresManager;
+import id.web.herlangga.badulik.backend.rms.RepositoryHelperRMS;
 
 import javax.microedition.rms.RecordStore;
 

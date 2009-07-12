@@ -1,4 +1,4 @@
-package id.web.herlangga.badulik.rms;
+package id.web.herlangga.badulik.backend.rms;
 
 import id.web.herlangga.badulik.DomainObjectFactory;
 import id.web.herlangga.badulik.RepositoryHelper;

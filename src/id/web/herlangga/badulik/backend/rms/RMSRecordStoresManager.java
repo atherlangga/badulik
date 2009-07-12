@@ -1,4 +1,4 @@
-package id.web.herlangga.badulik.rms;
+package id.web.herlangga.badulik.backend.rms;
 
 import java.util.Hashtable;
 
