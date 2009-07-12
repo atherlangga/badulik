@@ -10,14 +10,11 @@ import id.web.herlangga.badulik.definition.AttributeValuePair;
  */
 public interface DomainObjectFactory {
 	/**
-	 * Create domain object with specified ID.
+	 * Create domain object with specified data.
 	 * 
-	 * @param domainObjectID
-	 *            Unique Domain Object ID.
 	 * @param data
 	 *            Data for Domain Object.
 	 * @return Domain Object.
 	 */
-	public Object createDomainObject(int domainObjectID,
-			AttributeValuePair[] data);
+	public Object createDomainObject(AttributeValuePair[] data);
 }

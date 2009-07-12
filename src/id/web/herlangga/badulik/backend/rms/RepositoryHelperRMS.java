@@ -225,7 +225,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	public Object buildDomainObject(int domainObjectID,
 			Structure objectStructure, DomainObjectFactory factory) {
 		AttributeValuePair[] data = findRecord(domainObjectID, objectStructure);
-		Object domainObject = factory.createDomainObject(domainObjectID, data);
+		Object domainObject = factory.createDomainObject(data);
 		
 		return domainObject;
 	}
