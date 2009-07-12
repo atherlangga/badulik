@@ -61,15 +61,15 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	private Object readValueFrom(DataInputStream wrapper, DataType type)
 			throws IOException {
 		Object value = null;
-		if (type == DataType.INT) {
+		if (type.equals(DataType.INT)) {
 			value = new Integer(wrapper.readInt());
-		} else if (type == DataType.LONG) {
+		} else if (type.equals(DataType.LONG)) {
 			value = new Long(wrapper.readLong());
-		} else if (type == DataType.STRING) {
+		} else if (type.equals(DataType.STRING)) {
 			value = wrapper.readUTF();
-		} else if (type == DataType.DATE) {
+		} else if (type.equals(DataType.DATE)) {
 			value = new Date(wrapper.readLong());
-		} else if (type == DataType.BOOL) {
+		} else if (type.equals(DataType.BOOL)) {
 			value = new Boolean(wrapper.readBoolean());
 		} else {
 			throw new IllegalArgumentException("Object structure is not valid");
@@ -112,14 +112,11 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	private boolean domainObjectIsExist(int domainObjectID) {
 		try {
-			storage.getRecord(domainObjectID);
-			
-			return true;
+			RecordEnumeration enum = storage.enumerateRecords(null, null, false);
+			while(enum.hasNextElement()) {
+				return true;
+			}
 		} catch (RecordStoreNotOpenException e) {
-			e.printStackTrace();
-		} catch (InvalidRecordIDException e) {
-			e.printStackTrace();
-		} catch (RecordStoreException e) {
 			e.printStackTrace();
 		}
 
@@ -140,7 +137,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		byte[] rawData = writer.toByteArray();
 		try {
-			storage.addRecord(rawData, 0, data.length);
+			storage.addRecord(rawData, 0, rawData.length);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreFullException e) {
