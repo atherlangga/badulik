@@ -12,7 +12,10 @@ public interface DomainObjectFactory {
 	 * 
 	 * @param domainObjectID
 	 *            Unique Domain Object ID.
+	 * @param data
+	 *            Data for Domain Object.
 	 * @return Domain Object.
 	 */
-	public Object createDomainObject(long domainObjectID);
+	public Object createDomainObject(long domainObjectID,
+			AttributeValuePair[] data);
 }

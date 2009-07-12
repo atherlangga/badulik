@@ -2,6 +2,7 @@ package id.web.herlangga.badulik.rms;
 
 import id.web.herlangga.badulik.Attribute;
 import id.web.herlangga.badulik.AttributeValuePair;
+import id.web.herlangga.badulik.DomainObjectFactory;
 import id.web.herlangga.badulik.RepositoryHelper;
 import id.web.herlangga.badulik.Structure;
 import id.web.herlangga.badulik.Type;
@@ -71,10 +72,9 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		} else if (type == Type.BOOL) {
 			value = new Boolean(wrapper.readBoolean());
 		} else {
-			throw new IllegalArgumentException(
-					"Object structure is not valid");
+			throw new IllegalArgumentException("Object structure is not valid");
 		}
-		
+
 		return value;
 	}
 
@@ -207,19 +207,27 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			re = storage.enumerateRecords(null, null, false);
 			int total = re.numRecords();
 			int[] result = new int[total];
-			
+
 			for (int i = 0; i < total; i++) {
 				result[i] = re.nextRecordId();
 			}
-			
+
 			return result;
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (InvalidRecordIDException e) {
 			e.printStackTrace();
 		}
-		
+
 		throw new RuntimeException();
+	}
+
+	public Object buildDomainObject(int domainObjectID,
+			Structure objectStructure, DomainObjectFactory factory) {
+		AttributeValuePair[] data = findRecord(domainObjectID, objectStructure);
+		Object domainObject = factory.createDomainObject(domainObjectID, data);
+		
+		return domainObject;
 	}
 
 }

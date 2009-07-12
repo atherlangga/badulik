@@ -13,8 +13,11 @@ public interface RepositoryHelper {
 	public void saveRecord(int domainObjectID, AttributeValuePair[] data);
 
 	public void removeRecord(int domainObjectID);
-	
+
 	public int[] findAllDomainObjectIDs();
 
 	public int nextAvailableDomainObjectID();
+
+	public Object buildDomainObject(int domainObjectID,
+			Structure objectStructure, DomainObjectFactory factory);
 }
