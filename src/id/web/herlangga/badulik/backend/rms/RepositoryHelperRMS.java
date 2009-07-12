@@ -113,15 +113,17 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	private boolean domainObjectIsExist(int domainObjectID) {
 		try {
 			storage.getRecord(domainObjectID);
+			
+			return true;
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (InvalidRecordIDException e) {
-			return false;
+			e.printStackTrace();
 		} catch (RecordStoreException e) {
 			e.printStackTrace();
 		}
 
-		return true;
+		return false;
 	}
 
 	private void insertNewRecord(AttributeValuePair[] data) {
