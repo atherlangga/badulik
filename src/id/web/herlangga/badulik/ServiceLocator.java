@@ -12,12 +12,16 @@ public final class ServiceLocator {
 		ServiceLocator.backend = backend;
 	}
 
-	public static RepositoryHelper getRepositoryHelperFor(String uniqueRepositoryName) {
+	public static RepositoryHelper getRepositoryHelperFor(String repositoryName) {
 		if (ServiceLocator.backend == Backend.RMS) {
-			RecordStore storage = RMSRecordStoresManager.recordStoreFor(uniqueRepositoryName);
+			RecordStore storage = RMSRecordStoresManager.recordStoreFor(repositoryName);
 			return new RepositoryHelperRMS(storage);
 		}
 		
-		throw new IllegalArgumentException();
+		throw new IllegalStateException("Invalid selected Backend.");
+	}
+	
+	public static void drop(String repositoryName) {
+		RMSRecordStoresManager.recordStoreFor(repositoryName);
 	}
 }
