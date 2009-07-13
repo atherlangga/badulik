@@ -55,7 +55,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			e.printStackTrace();
 		}
 
-		throw new RuntimeException();
+		return new AttributeValuePair[0];
 	}
 
 	private Object readValueFrom(DataInputStream wrapper, DataType type)
