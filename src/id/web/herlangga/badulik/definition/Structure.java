@@ -3,72 +3,43 @@ package id.web.herlangga.badulik.definition;
 import java.util.Vector;
 
 public class Structure {
-	private Vector attributes;
+	private Vector fields;
 
 	public Structure() {
-		this.attributes = new Vector(5);
+		this.fields = new Vector(5);
 	}
 
-	public void add(String name, DataType type) {
-		Attribute attribute = new Attribute(name, type);
+	public void add(int fieldNumber, DataType fieldType) {
+		Field attribute = new Field(fieldNumber, fieldType);
 		add(attribute);
 	}
 
-	public void add(Attribute attribute) {
-		if (!attributes.contains(attribute)) {
-			attributes.addElement(attribute);
+	private void add(Field attribute) {
+		if (!fields.contains(attribute)) {
+			fields.addElement(attribute);
 		} else {
-			throw new IllegalArgumentException("Attribute is already exists.");
+			throw new IllegalArgumentException("Field is already exists.");
 		}
 
 	}
 
-	public Attribute getAttributeNumber(int number) {
-		return (Attribute) attributes.elementAt(number);
+	public Field getFieldNumber(int number) {
+		return (Field) fields.elementAt(number);
 	}
 
-	public String getNameNumber(int number) {
-		Attribute a = getAttributeNumber(number);
-		return a.getName();
+	public DataType getFieldTypeOfFieldNumber(int number) {
+		Field a = getFieldNumber(number);
+		return a.getFieldType();
 	}
 
-	public DataType getTypeNumber(int number) {
-		Attribute a = getAttributeNumber(number);
-		return a.getType();
+	public Field[] toArray() {
+		Field[] arrayOfFields = new Field[fieldsSize()];
+		fields.copyInto(arrayOfFields);
+
+		return arrayOfFields;
 	}
 
-	public DataType getTypeOf(String name) {
-		int total = attributes.size();
-
-		int count = 0;
-		while (count < total) {
-			Attribute a = (Attribute) attributes.elementAt(count);
-			if (a.getName() == name) {
-				return a.getType();
-			}
-			count++;
-		}
-
-		return null;
-	}
-	
-	public int getNumberOf(String name) {
-		int total = attributes.size();
-		
-		int count = 0;
-		while (count < total) {
-			Attribute a = (Attribute) attributes.elementAt(count);
-			if (a.getName().equals(name)) {
-				return count;
-			}
-			
-			count++;
-		}
-		
-		return -1;
-	}
-	
-	public int fieldSize() {
-		return attributes.size();
+	public int fieldsSize() {
+		return fields.size();
 	}
 }

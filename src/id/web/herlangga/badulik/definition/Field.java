@@ -1,26 +1,26 @@
 package id.web.herlangga.badulik.definition;
 
-public class Attribute {
-	private String name;
+public class Field {
+	private int fieldNumber;
 	private DataType type;
 	
-	public Attribute(String name, DataType type) {
-		this.name = name;
-		this.type = type;
+	public Field(int fieldNumber, DataType fieldType) {
+		this.fieldNumber = fieldNumber;
+		this.type = fieldType;
 	}
 
-	public final String getName() {
-		return name;
+	public final int getFieldNumber() {
+		return fieldNumber;
 	}
 
-	public final DataType getType() {
+	public final DataType getFieldType() {
 		return type;
 	}
 
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + fieldNumber;
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -32,11 +32,8 @@ public class Attribute {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Attribute other = (Attribute) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
+		Field other = (Field) obj;
+		if (fieldNumber != other.fieldNumber)
 			return false;
 		if (type == null) {
 			if (other.type != null)
@@ -45,6 +42,5 @@ public class Attribute {
 			return false;
 		return true;
 	}
-	
 	
 }

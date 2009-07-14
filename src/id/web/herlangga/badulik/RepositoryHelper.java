@@ -1,6 +1,6 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.definition.AttributeValuePair;
+import id.web.herlangga.badulik.definition.FieldValuePair;
 import id.web.herlangga.badulik.definition.Structure;
 
 /**
@@ -10,17 +10,16 @@ import id.web.herlangga.badulik.definition.Structure;
  * 
  */
 public interface RepositoryHelper {
-	public AttributeValuePair[] findRecord(int domainObjectID,
-			Structure objectStructure);
+	public FieldValuePair[] findRecord(int domainObjectID, Structure fieldsList);
 
-	public void saveRecord(int domainObjectID, AttributeValuePair[] data);
+	public void saveRecord(int domainObjectID, FieldValuePair[] data);
 
 	public void removeRecord(int domainObjectID);
 
-	public int[] findAllDomainObjectIDs();
+	public int[] findAllDomainObjectIDs(Structure fieldsList);
 
 	public int nextAvailableDomainObjectID();
 
-	public Object buildDomainObject(int domainObjectID,
-			Structure objectStructure, DomainObjectFactory factory);
+	public Object buildDomainObject(int domainObjectID, Structure fieldsList,
+			DomainObjectFactory factory);
 }

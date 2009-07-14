@@ -1,16 +1,16 @@
 package id.web.herlangga.badulik.definition;
 
-public class AttributeValuePair {
-	private Attribute attribute;
+public class FieldValuePair {
+	private Field field;
 	private Object value;
 	
-	public AttributeValuePair(Attribute attribute, Object value) {
-		this.attribute = attribute;
+	public FieldValuePair(Field field, Object value) {
+		this.field = field;
 		this.value = value;
 	}
 	
-	public final Attribute getAttribute() {
-		return attribute;
+	public final Field getField() {
+		return field;
 	}
 	
 	public final Object getValue() {
@@ -21,7 +21,7 @@ public class AttributeValuePair {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((attribute == null) ? 0 : attribute.hashCode());
+				+ ((field == null) ? 0 : field.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
@@ -33,11 +33,11 @@ public class AttributeValuePair {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AttributeValuePair other = (AttributeValuePair) obj;
-		if (attribute == null) {
-			if (other.attribute != null)
+		FieldValuePair other = (FieldValuePair) obj;
+		if (field == null) {
+			if (other.field != null)
 				return false;
-		} else if (!attribute.equals(other.attribute))
+		} else if (!field.equals(other.field))
 			return false;
 		if (value == null) {
 			if (other.value != null)
