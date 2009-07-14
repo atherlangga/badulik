@@ -1,24 +1,23 @@
 package id.web.herlangga.badulik.backend.rms;
 
+import id.web.herlangga.badulik.definition.AttributeValuePair;
+import id.web.herlangga.badulik.definition.DataType;
+import id.web.herlangga.badulik.definition.Structure;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
-import id.web.herlangga.badulik.definition.AttributeValuePair;
-import id.web.herlangga.badulik.definition.DataType;
-import id.web.herlangga.badulik.definition.Structure;
 import jmunit.framework.cldc11.TestCase;
 
 public class RepositoryHelperRMSTest extends TestCase {
 	private static final String storageName = "test";
-	private RecordStore storage;
 	private RepositoryHelperRMS helper;
 
 	/**
@@ -42,10 +41,12 @@ public class RepositoryHelperRMSTest extends TestCase {
 			dos.writeInt(5);
 			dos.writeUTF("Five");
 
-			int id = storage.addRecord(baos.toByteArray(), 0, baos
-					.toByteArray().length);
+			int id = RMSRecordStoresManager
+					.recordStoreFor(storageName)
+					.addRecord(baos.toByteArray(), 0, baos.toByteArray().length);
 
-			byte[] raw = storage.getRecord(id);
+			byte[] raw = RMSRecordStoresManager.recordStoreFor(storageName)
+					.getRecord(id);
 			ByteArrayInputStream bais = new ByteArrayInputStream(raw);
 			DataInputStream dis = new DataInputStream(bais);
 
@@ -81,7 +82,8 @@ public class RepositoryHelperRMSTest extends TestCase {
 		AttributeValuePair[] fromRepository = helper.findRecord(id, structure);
 		assertEquals("First value before and after persisted should be equals",
 				data[0].getValue(), fromRepository[0].getValue());
-		assertEquals("Second value before and after persisted should be equals",
+		assertEquals(
+				"Second value before and after persisted should be equals",
 				data[1].getValue(), fromRepository[1].getValue());
 	}
 
@@ -111,8 +113,7 @@ public class RepositoryHelperRMSTest extends TestCase {
 	 *             anything that the initialization can throw.
 	 */
 	public void setUp() throws Throwable {
-		storage = RMSRecordStoresManager.recordStoreFor(storageName);
-		helper = new RepositoryHelperRMS(storage);
+		helper = new RepositoryHelperRMS(storageName);
 	}
 
 	/**

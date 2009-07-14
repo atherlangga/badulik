@@ -16,43 +16,46 @@ import java.util.Date;
 
 import javax.microedition.rms.InvalidRecordIDException;
 import javax.microedition.rms.RecordEnumeration;
-import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
 public class RepositoryHelperRMS implements RepositoryHelper {
-	private RecordStore storage;
+	private String storageName;
 
-	public RepositoryHelperRMS(RecordStore storage) {
-		this.storage = storage;
+	public RepositoryHelperRMS(String storageName) {
+		this.storageName = storageName;
 	}
 
 	public AttributeValuePair[] findRecord(int domainObjectID,
 			Structure objectStructure) {
 		int fieldSize = objectStructure.fieldSize();
 		AttributeValuePair[] result = new AttributeValuePair[fieldSize];
-		try {
-			byte[] rawData = storage.getRecord(domainObjectID);
-			DataInputStream wrapper = new DataInputStream(
-					new ByteArrayInputStream(rawData));
-			for (int i = 0; i < fieldSize; i++) {
-				DataType type = DataType.fromInteger(wrapper.readInt());
-				Attribute attribute = objectStructure.getAttributeNumber(i);
-				Object val = readValueFrom(wrapper, type);
 
-				result[i] = new AttributeValuePair(attribute, val);
+		if (domainObjectIsExist(domainObjectID)) {
+			try {
+				byte[] rawData = RMSRecordStoresManager.recordStoreFor(
+						storageName).getRecord(domainObjectID);
+				DataInputStream wrapper = new DataInputStream(
+						new ByteArrayInputStream(rawData));
+				for (int i = 0; i < fieldSize; i++) {
+					DataType type = DataType.fromInteger(wrapper.readInt());
+					Attribute attribute = objectStructure.getAttributeNumber(i);
+					Object val = readValueFrom(wrapper, type);
+
+					result[i] = new AttributeValuePair(attribute, val);
+				}
+
+				return result;
+			} catch (RecordStoreNotOpenException e) {
+				e.printStackTrace();
+			} catch (InvalidRecordIDException e) {
+				e.printStackTrace();
+			} catch (RecordStoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-
-			return result;
-		} catch (RecordStoreNotOpenException e) {
-			e.printStackTrace();
-		} catch (InvalidRecordIDException e) {
-			e.printStackTrace();
-		} catch (RecordStoreException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		return new AttributeValuePair[0];
@@ -72,7 +75,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		} else if (type.equals(DataType.BOOL)) {
 			value = new Boolean(wrapper.readBoolean());
 		} else {
-			throw new IllegalArgumentException("Object structure is not valid");
+			throw new IllegalArgumentException("Object structure is not valid.");
 		}
 
 		return value;
@@ -80,7 +83,8 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public int nextAvailableDomainObjectID() {
 		try {
-			return storage.getNextRecordID();
+			return RMSRecordStoresManager.recordStoreFor(storageName)
+					.getNextRecordID();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {
@@ -92,7 +96,8 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public void removeRecord(int domainObjectID) {
 		try {
-			storage.deleteRecord(domainObjectID);
+			RMSRecordStoresManager.recordStoreFor(storageName).deleteRecord(
+					domainObjectID);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (InvalidRecordIDException e) {
@@ -112,8 +117,9 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	private boolean domainObjectIsExist(int domainObjectID) {
 		try {
-			storage.getRecord(domainObjectID);
-			
+			RMSRecordStoresManager.recordStoreFor(storageName).getRecord(
+					domainObjectID);
+
 			return true;
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -140,7 +146,8 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		byte[] rawData = writer.toByteArray();
 		try {
-			storage.addRecord(rawData, 0, rawData.length);
+			RMSRecordStoresManager.recordStoreFor(storageName).addRecord(
+					rawData, 0, rawData.length);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreFullException e) {
@@ -192,7 +199,8 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		byte[] rawData = writer.toByteArray();
 		try {
-			storage.setRecord(domainObjectID, rawData, 0, rawData.length);
+			RMSRecordStoresManager.recordStoreFor(storageName).setRecord(
+					domainObjectID, rawData, 0, rawData.length);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreFullException e) {
@@ -206,7 +214,8 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	public int[] findAllDomainObjectIDs() {
 		RecordEnumeration re;
 		try {
-			re = storage.enumerateRecords(null, null, false);
+			re = RMSRecordStoresManager.recordStoreFor(storageName)
+					.enumerateRecords(null, null, false);
 			int total = re.numRecords();
 			int[] result = new int[total];
 
@@ -228,7 +237,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			Structure objectStructure, DomainObjectFactory factory) {
 		AttributeValuePair[] data = findRecord(domainObjectID, objectStructure);
 		Object domainObject = factory.createDomainObject(data);
-		
+
 		return domainObject;
 	}
 
