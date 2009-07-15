@@ -1,10 +1,16 @@
 package id.web.herlangga.badulik;
 
+/**
+ * Backend for the storage mechanism.
+ * 
+ * @author angga
+ * 
+ */
 public final class Backend {
 	public static final Backend RMS = new Backend(1);
-	
+
 	private int type;
-	
+
 	private Backend(int type) {
 		this.type = type;
 	}
@@ -28,6 +34,5 @@ public final class Backend {
 			return false;
 		return true;
 	}
-	
-	
+
 }

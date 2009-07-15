@@ -1,6 +1,6 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.definition.FieldValuePair;
+import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
 
 /**
  * Domain Object creator.
@@ -16,5 +16,5 @@ public interface DomainObjectFactory {
 	 *            Data for Domain Object.
 	 * @return Domain Object.
 	 */
-	public Object createDomainObject(FieldValuePair[] data);
+	public Object createDomainObject(DataTypeAndValuePair[] data);
 }

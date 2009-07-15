@@ -4,35 +4,35 @@ import java.util.Vector;
 
 public class Structure {
 	private Vector fields;
+	private Field domainObjectIDField;
 
-	public Structure() {
+	public Structure(int domainObjectIDFieldNumber) {
 		this.fields = new Vector(5);
+		this.domainObjectIDField = new Field(domainObjectIDFieldNumber,
+				DataType.LONG);
+
+		fields.addElement(domainObjectIDField);
 	}
 
 	public void add(int fieldNumber, DataType fieldType) {
 		Field field = new Field(fieldNumber, fieldType);
-		add(field);
+		fields.addElement(field);
 	}
 
-	private void add(Field newField) {
-		if (!fields.contains(newField)) {
-			fields.addElement(newField);
-		} else {
-			throw new IllegalArgumentException("Field is already exists.");
-		}
-
+	public int getDomainObjectIDFieldNumber() {
+		return domainObjectIDField.getFieldNumber();
+	}
+	
+	public final DataType getDomainObjectIDDataType() {
+		return domainObjectIDField.getFieldType();
 	}
 
-	public Field getFieldNumber(int number) {
-		return (Field) fields.elementAt(number);
+	public final DataType getDataTypeOfFieldNumber(int number) {
+		Field field = (Field) fields.elementAt(number);
+		return field.getFieldType();
 	}
 
-	public DataType getDataTypeOfFieldNumber(int number) {
-		Field a = getFieldNumber(number);
-		return a.getFieldType();
-	}
-
-	public Field[] toArray() {
+	public final Field[] toArray() {
 		Field[] arrayOfFields = new Field[fieldsSize()];
 		fields.copyInto(arrayOfFields);
 

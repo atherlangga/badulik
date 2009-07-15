@@ -12,11 +12,10 @@ public final class BadulikService {
 	}
 
 	public static RepositoryHelper getRepositoryHelperFor(
-			String repositoryName, Structure domainObjectStructure,
-			DomainObjectIDScanner idScanner) {
+			String repositoryName, Structure domainObjectStructure) {
 		if (BadulikService.backend == Backend.RMS) {
 			return new RepositoryHelperRMS(repositoryName,
-					domainObjectStructure, idScanner);
+					domainObjectStructure);
 		}
 
 		throw new IllegalStateException("Invalid selected Backend.");

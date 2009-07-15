@@ -1,11 +1,9 @@
 package id.web.herlangga.badulik.backend.rms;
 
 import id.web.herlangga.badulik.DomainObjectFactory;
-import id.web.herlangga.badulik.DomainObjectIDScanner;
 import id.web.herlangga.badulik.RepositoryHelper;
 import id.web.herlangga.badulik.definition.DataType;
-import id.web.herlangga.badulik.definition.Field;
-import id.web.herlangga.badulik.definition.FieldValuePair;
+import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
 import id.web.herlangga.badulik.definition.Structure;
 
 import java.io.ByteArrayInputStream;
@@ -25,22 +23,20 @@ import javax.microedition.rms.RecordStoreNotOpenException;
 public class RepositoryHelperRMS implements RepositoryHelper {
 	private String storageName;
 	private Structure domainObjectStructure;
-	private DomainObjectIDScanner idScanner;
 
 	public RepositoryHelperRMS(String storageName,
-			Structure domainObjectStructure, DomainObjectIDScanner idScanner) {
+			Structure domainObjectStructure) {
 		this.storageName = storageName;
 		this.domainObjectStructure = domainObjectStructure;
-		this.idScanner = idScanner;
 	}
 
-	public FieldValuePair[] findRecord(int domainObjectID) {
+	public DataTypeAndValuePair[] findRecord(long domainObjectID) {
 		if (domainObjectIsExist(domainObjectID)) {
 			try {
 				int recordID = getRecordIDForDomainObjectID(domainObjectID);
 				byte[] rawData = RecordStoresManager
 						.recordStoreFor(storageName).getRecord(recordID);
-				return getFieldValuePairsFrom(rawData);
+				return getDataTypeAndValuePairsFrom(rawData);
 			} catch (RecordStoreNotOpenException e) {
 				e.printStackTrace();
 			} catch (InvalidRecordIDException e) {
@@ -50,23 +46,21 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			}
 		}
 
-		return new FieldValuePair[0];
+		return new DataTypeAndValuePair[0];
 	}
 
-	private FieldValuePair[] getFieldValuePairsFrom(byte[] rawData) {
+	private DataTypeAndValuePair[] getDataTypeAndValuePairsFrom(byte[] rawData) {
 		int fieldSize = domainObjectStructure.fieldsSize();
-		FieldValuePair[] result = new FieldValuePair[fieldSize];
+		DataTypeAndValuePair[] result = new DataTypeAndValuePair[fieldSize];
 
 		try {
-			Field[] fields = domainObjectStructure.toArray();
 			DataInputStream wrapper = new DataInputStream(
 					new ByteArrayInputStream(rawData));
 			for (int i = 0; i < fieldSize; i++) {
 				DataType type = DataType.fromInteger(wrapper.readInt());
-				Field field = fields[i];
 				Object val = readValueFrom(wrapper, type);
 
-				result[i] = new FieldValuePair(field, val);
+				result[i] = new DataTypeAndValuePair(type, val);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -92,12 +86,12 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 				throw new IllegalArgumentException(
 						"Object structure is not valid.");
 			}
-			
+
 			return value;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
@@ -114,7 +108,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		throw new RuntimeException();
 	}
 
-	public void removeRecord(int domainObjectID) {
+	public void removeRecord(long domainObjectID) {
 		try {
 			int recordID = getRecordIDForDomainObjectID(domainObjectID);
 			RecordStoresManager.recordStoreFor(storageName).deleteRecord(
@@ -128,7 +122,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		}
 	}
 
-	public void saveRecord(int domainObjectID, FieldValuePair[] data) {
+	public void saveRecord(long domainObjectID, DataTypeAndValuePair[] data) {
 		if (domainObjectIsExist(domainObjectID)) {
 			editExistingRecord(domainObjectID, data);
 		} else {
@@ -136,13 +130,8 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		}
 	}
 
-	private boolean domainObjectIsExist(final int domainObjectID) {
-		RecordFilter domainObjectIDFilter = new RecordFilter() {
-			public boolean matches(byte[] arg0) {
-				FieldValuePair[] data = getFieldValuePairsFrom(arg0);
-				return (idScanner.scanDomainObjectIDFrom(data) == domainObjectID);
-			}
-		};
+	private boolean domainObjectIsExist(long domainObjectID) {
+		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
 
 		try {
 			RecordEnumeration re = RecordStoresManager.recordStoreFor(
@@ -158,13 +147,23 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		return false;
 	}
 
-	private int getRecordIDForDomainObjectID(final int domainObjectID) {
+	private RecordFilter getDomainObjectIDRecordFilterFor(
+			final long domainObjectID) {
+		final int domainObjectIDFieldNumber = domainObjectStructure
+				.getDomainObjectIDFieldNumber();
 		RecordFilter domainObjectIDFilter = new RecordFilter() {
 			public boolean matches(byte[] arg0) {
-				FieldValuePair[] data = getFieldValuePairsFrom(arg0);
-				return (idScanner.scanDomainObjectIDFrom(data) == domainObjectID);
+				DataTypeAndValuePair[] data = getDataTypeAndValuePairsFrom(arg0);
+				Long id = (Long) data[domainObjectIDFieldNumber].getValue();
+				long currentDomainObjectID = id.longValue();
+				return (currentDomainObjectID == domainObjectID);
 			}
 		};
+		return domainObjectIDFilter;
+	}
+
+	private int getRecordIDForDomainObjectID(long domainObjectID) {
+		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
 
 		try {
 			RecordEnumeration re = RecordStoresManager.recordStoreFor(
@@ -183,13 +182,13 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 				"Invalid Domain Object ID specified.");
 	}
 
-	private void insertNewRecord(FieldValuePair[] data) {
+	private void insertNewRecord(DataTypeAndValuePair[] data) {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
 
 		int dataFieldLength = data.length;
 		for (int i = 0; i < dataFieldLength; i++) {
-			DataType type = data[i].getField().getFieldType();
+			DataType type = data[i].getDataType();
 			Object value = data[i].getValue();
 
 			writeTypeAndObjectTo(wrapper, type, value);
@@ -235,13 +234,14 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		}
 	}
 
-	private void editExistingRecord(int domainObjectID, FieldValuePair[] data) {
+	private void editExistingRecord(long domainObjectID,
+			DataTypeAndValuePair[] data) {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
 
 		int dataFieldLength = data.length;
 		for (int i = 0; i < dataFieldLength; i++) {
-			DataType type = data[i].getField().getFieldType();
+			DataType type = data[i].getDataType();
 			Object value = data[i].getValue();
 
 			writeTypeAndObjectTo(wrapper, type, value);
@@ -262,19 +262,21 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	}
 
-	public int[] findAllDomainObjectIDs() {
+	public long[] findAllDomainObjectIDs() {
 		try {
 			RecordEnumeration re = RecordStoresManager.recordStoreFor(
 					storageName).enumerateRecords(null, null, false);
 			int total = re.numRecords();
-			int[] result = new int[total];
+			long[] result = new long[total];
 
 			for (int i = 0; i < total; i++) {
 				byte[] rawData = RecordStoresManager
 						.recordStoreFor(storageName).getRecord(
 								re.nextRecordId());
-				FieldValuePair[] data = getFieldValuePairsFrom(rawData);
-				int domainObjectID = idScanner.scanDomainObjectIDFrom(data);
+				DataTypeAndValuePair[] data = getDataTypeAndValuePairsFrom(rawData);
+				Long id = (Long) data[domainObjectStructure
+						.getDomainObjectIDFieldNumber()].getValue();
+				long domainObjectID = id.longValue();
 				result[i] = domainObjectID;
 			}
 
@@ -290,9 +292,9 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		throw new RuntimeException();
 	}
 
-	public Object buildDomainObject(int domainObjectID,
+	public Object buildDomainObject(long domainObjectID,
 			DomainObjectFactory factory) {
-		FieldValuePair[] data = findRecord(domainObjectID);
+		DataTypeAndValuePair[] data = findRecord(domainObjectID);
 		Object domainObject = factory.createDomainObject(data);
 
 		return domainObject;
