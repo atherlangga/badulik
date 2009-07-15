@@ -42,6 +42,16 @@ public interface RepositoryHelper {
 	public void removeRecord(long domainObjectID);
 
 	/**
+	 * Check whether specified Domain Object is exist in the storage or not.
+	 * 
+	 * @param domainObjectID
+	 *            Domain Object ID to identify every unique Domain Object.
+	 * @return <code>true</code> if specified Domain Object ID exist, else
+	 *         <code>false</code>.
+	 */
+	public boolean isExist(long domainObjectID);
+
+	/**
 	 * Find and return all Domain Object IDs exist in the storage.
 	 * 
 	 * @return array of int contains Domain Object IDs.

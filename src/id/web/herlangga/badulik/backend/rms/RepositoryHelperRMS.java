@@ -31,7 +31,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	}
 
 	public DataTypeAndValuePair[] findRecord(long domainObjectID) {
-		if (domainObjectIsExist(domainObjectID)) {
+		if (isExist(domainObjectID)) {
 			try {
 				int recordID = getRecordIDForDomainObjectID(domainObjectID);
 				byte[] rawData = RecordStoresManager
@@ -123,14 +123,14 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	}
 
 	public void saveRecord(long domainObjectID, DataTypeAndValuePair[] data) {
-		if (domainObjectIsExist(domainObjectID)) {
+		if (isExist(domainObjectID)) {
 			editExistingRecord(domainObjectID, data);
 		} else {
 			insertNewRecord(data);
 		}
 	}
 
-	private boolean domainObjectIsExist(long domainObjectID) {
+	public boolean isExist(long domainObjectID) {
 		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
 
 		try {
