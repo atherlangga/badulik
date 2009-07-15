@@ -39,8 +39,10 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			FieldValuePair[] result = new FieldValuePair[fieldSize];
 
 			try {
+				int recordID = getRecordIDForDomainObjectID(domainObjectID,
+						fields);
 				byte[] rawData = RMSRecordStoresManager.recordStoreFor(
-						storageName).getRecord(domainObjectID);
+						storageName).getRecord(recordID);
 				DataInputStream wrapper = new DataInputStream(
 						new ByteArrayInputStream(rawData));
 				for (int i = 0; i < fieldSize; i++) {
@@ -179,6 +181,32 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		}
 
 		return false;
+	}
+
+	private int getRecordIDForDomainObjectID(final int domainObjectID,
+			final Field[] fields) {
+		RecordFilter domainObjectIDFilter = new RecordFilter() {
+			public boolean matches(byte[] arg0) {
+				FieldValuePair[] data = getAttributeValuePairsFrom(arg0, fields);
+				return (idScanner.scanDomainObjectIDFrom(data) == domainObjectID);
+			}
+		};
+
+		try {
+			RecordEnumeration re = RMSRecordStoresManager.recordStoreFor(
+					storageName).enumerateRecords(domainObjectIDFilter, null,
+					false);
+			if (re.hasNextElement()) {
+				return re.nextRecordId();
+			}
+		} catch (RecordStoreNotOpenException e) {
+			e.printStackTrace();
+		} catch (InvalidRecordIDException e) {
+			e.printStackTrace();
+		}
+
+		throw new IllegalArgumentException(
+				"Invalid Domain Object ID specified.");
 	}
 
 	private void insertNewRecord(FieldValuePair[] data) {
