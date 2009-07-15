@@ -10,13 +10,13 @@ public class Structure {
 	}
 
 	public void add(int fieldNumber, DataType fieldType) {
-		Field attribute = new Field(fieldNumber, fieldType);
-		add(attribute);
+		Field field = new Field(fieldNumber, fieldType);
+		add(field);
 	}
 
-	private void add(Field attribute) {
-		if (!fields.contains(attribute)) {
-			fields.addElement(attribute);
+	private void add(Field newField) {
+		if (!fields.contains(newField)) {
+			fields.addElement(newField);
 		} else {
 			throw new IllegalArgumentException("Field is already exists.");
 		}
@@ -27,7 +27,7 @@ public class Structure {
 		return (Field) fields.elementAt(number);
 	}
 
-	public DataType getFieldTypeOfFieldNumber(int number) {
+	public DataType getDataTypeOfFieldNumber(int number) {
 		Field a = getFieldNumber(number);
 		return a.getFieldType();
 	}
