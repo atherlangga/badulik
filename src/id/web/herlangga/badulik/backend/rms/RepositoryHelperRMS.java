@@ -36,32 +36,16 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public FieldValuePair[] findRecord(int domainObjectID) {
 		if (domainObjectIsExist(domainObjectID)) {
-			int fieldSize = domainObjectStructure.fieldsSize();
-			FieldValuePair[] result = new FieldValuePair[fieldSize];
-
 			try {
-				Field[] fields = domainObjectStructure.toArray();
 				int recordID = getRecordIDForDomainObjectID(domainObjectID);
 				byte[] rawData = RecordStoresManager
 						.recordStoreFor(storageName).getRecord(recordID);
-				DataInputStream wrapper = new DataInputStream(
-						new ByteArrayInputStream(rawData));
-				for (int i = 0; i < fieldSize; i++) {
-					DataType type = DataType.fromInteger(wrapper.readInt());
-					Field attribute = fields[i];
-					Object val = readValueFrom(wrapper, type);
-
-					result[i] = new FieldValuePair(attribute, val);
-				}
-
-				return result;
+				return getFieldValuePairsFrom(rawData);
 			} catch (RecordStoreNotOpenException e) {
 				e.printStackTrace();
 			} catch (InvalidRecordIDException e) {
 				e.printStackTrace();
 			} catch (RecordStoreException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -69,7 +53,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		return new FieldValuePair[0];
 	}
 
-	private FieldValuePair[] getAttributeValuePairsFrom(byte[] rawData) {
+	private FieldValuePair[] getFieldValuePairsFrom(byte[] rawData) {
 		int fieldSize = domainObjectStructure.fieldsSize();
 		FieldValuePair[] result = new FieldValuePair[fieldSize];
 
@@ -108,11 +92,13 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 				throw new IllegalArgumentException(
 						"Object structure is not valid.");
 			}
+			
+			return value;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		return value;
+		
+		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
 	public int nextAvailableDomainObjectID() {
@@ -153,7 +139,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	private boolean domainObjectIsExist(final int domainObjectID) {
 		RecordFilter domainObjectIDFilter = new RecordFilter() {
 			public boolean matches(byte[] arg0) {
-				FieldValuePair[] data = getAttributeValuePairsFrom(arg0);
+				FieldValuePair[] data = getFieldValuePairsFrom(arg0);
 				return (idScanner.scanDomainObjectIDFrom(data) == domainObjectID);
 			}
 		};
@@ -175,7 +161,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	private int getRecordIDForDomainObjectID(final int domainObjectID) {
 		RecordFilter domainObjectIDFilter = new RecordFilter() {
 			public boolean matches(byte[] arg0) {
-				FieldValuePair[] data = getAttributeValuePairsFrom(arg0);
+				FieldValuePair[] data = getFieldValuePairsFrom(arg0);
 				return (idScanner.scanDomainObjectIDFrom(data) == domainObjectID);
 			}
 		};
@@ -287,7 +273,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 				byte[] rawData = RecordStoresManager
 						.recordStoreFor(storageName).getRecord(
 								re.nextRecordId());
-				FieldValuePair[] data = getAttributeValuePairsFrom(rawData);
+				FieldValuePair[] data = getFieldValuePairsFrom(rawData);
 				int domainObjectID = idScanner.scanDomainObjectIDFrom(data);
 				result[i] = domainObjectID;
 			}
