@@ -14,7 +14,7 @@ import javax.microedition.rms.RecordStoreNotOpenException;
  * @author angga
  * 
  */
-public final class RMSRecordStoresManager {
+public final class RecordStoresManager {
 	private static Hashtable recordStores = new Hashtable();
 
 	/**
@@ -27,7 +27,8 @@ public final class RMSRecordStoresManager {
 	 */
 	public static RecordStore recordStoreFor(String repositoryName) {
 		if (!recordStores.containsKey(repositoryName)) {
-			createRecordStore(repositoryName);
+			RecordStore newRecordStore = createRecordStore(repositoryName);
+			recordStores.put(repositoryName, newRecordStore);
 		}
 
 		return (RecordStore) recordStores.get(repositoryName);
@@ -64,7 +65,7 @@ public final class RMSRecordStoresManager {
 
 	private static void closeThenDelete(String name) {
 		try {
-			RecordStore repository = recordStoreFor(name); 
+			RecordStore repository = recordStoreFor(name);
 			repository.closeRecordStore();
 			RecordStore.deleteRecordStore(name);
 		} catch (RecordStoreNotOpenException e) {
@@ -75,12 +76,11 @@ public final class RMSRecordStoresManager {
 
 	}
 
-	private static void createRecordStore(String repositoryName) {
+	private static RecordStore createRecordStore(String repositoryName) {
 		try {
 			boolean createIfNecessary = true;
-			RecordStore recordStore = RecordStore.openRecordStore(
-					repositoryName, createIfNecessary);
-			recordStores.put(repositoryName, recordStore);
+			return RecordStore.openRecordStore(repositoryName,
+					createIfNecessary);
 		} catch (RecordStoreFullException e) {
 			e.printStackTrace();
 		} catch (RecordStoreNotFoundException e) {
@@ -88,7 +88,8 @@ public final class RMSRecordStoresManager {
 		} catch (RecordStoreException e) {
 			e.printStackTrace();
 		}
-
+		
+		throw new IllegalStateException();
 	}
 
 	private static boolean recordStoreIsNotExist(String name) {

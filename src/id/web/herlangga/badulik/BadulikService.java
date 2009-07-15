@@ -1,6 +1,6 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.backend.rms.RMSRecordStoresManager;
+import id.web.herlangga.badulik.backend.rms.RecordStoresManager;
 import id.web.herlangga.badulik.backend.rms.RepositoryHelperRMS;
 
 public final class BadulikService {
@@ -20,6 +20,6 @@ public final class BadulikService {
 	}
 	
 	public static void drop(String repositoryName) {
-		RMSRecordStoresManager.deleteRecordStore(repositoryName);
+		RecordStoresManager.deleteRecordStore(repositoryName);
 	}
 }

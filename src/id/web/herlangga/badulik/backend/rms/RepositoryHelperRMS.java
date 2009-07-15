@@ -41,7 +41,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			try {
 				int recordID = getRecordIDForDomainObjectID(domainObjectID,
 						fields);
-				byte[] rawData = RMSRecordStoresManager.recordStoreFor(
+				byte[] rawData = RecordStoresManager.recordStoreFor(
 						storageName).getRecord(recordID);
 				DataInputStream wrapper = new DataInputStream(
 						new ByteArrayInputStream(rawData));
@@ -116,7 +116,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public int nextAvailableDomainObjectID() {
 		try {
-			return RMSRecordStoresManager.recordStoreFor(storageName)
+			return RecordStoresManager.recordStoreFor(storageName)
 					.getNextRecordID();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -129,7 +129,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public void removeRecord(int domainObjectID) {
 		try {
-			RMSRecordStoresManager.recordStoreFor(storageName).deleteRecord(
+			RecordStoresManager.recordStoreFor(storageName).deleteRecord(
 					domainObjectID);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -170,7 +170,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		};
 
 		try {
-			RecordEnumeration re = RMSRecordStoresManager.recordStoreFor(
+			RecordEnumeration re = RecordStoresManager.recordStoreFor(
 					storageName).enumerateRecords(domainObjectIDFilter, null,
 					false);
 			if (re.hasNextElement()) {
@@ -193,7 +193,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		};
 
 		try {
-			RecordEnumeration re = RMSRecordStoresManager.recordStoreFor(
+			RecordEnumeration re = RecordStoresManager.recordStoreFor(
 					storageName).enumerateRecords(domainObjectIDFilter, null,
 					false);
 			if (re.hasNextElement()) {
@@ -223,7 +223,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		byte[] rawData = writer.toByteArray();
 		try {
-			RMSRecordStoresManager.recordStoreFor(storageName).addRecord(
+			RecordStoresManager.recordStoreFor(storageName).addRecord(
 					rawData, 0, rawData.length);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -275,7 +275,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		byte[] rawData = writer.toByteArray();
 		try {
-			RMSRecordStoresManager.recordStoreFor(storageName).setRecord(
+			RecordStoresManager.recordStoreFor(storageName).setRecord(
 					domainObjectID, rawData, 0, rawData.length);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -289,13 +289,13 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public int[] findAllDomainObjectIDs(Structure fieldsList) {
 		try {
-			RecordEnumeration re = RMSRecordStoresManager.recordStoreFor(
+			RecordEnumeration re = RecordStoresManager.recordStoreFor(
 					storageName).enumerateRecords(null, null, false);
 			int total = re.numRecords();
 			int[] result = new int[total];
 
 			for (int i = 0; i < total; i++) {
-				byte[] rawData = RMSRecordStoresManager.recordStoreFor(
+				byte[] rawData = RecordStoresManager.recordStoreFor(
 						storageName).getRecord(re.nextRecordId());
 				FieldValuePair[] data = getAttributeValuePairsFrom(rawData,
 						fieldsList.toArray());
