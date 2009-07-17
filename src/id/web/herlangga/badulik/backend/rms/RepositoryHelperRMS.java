@@ -62,7 +62,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 				result[i] = new DataTypeAndValuePair(type, val);
 			}
-			
+
 			reader.close();
 			wrapper.close();
 		} catch (IOException e) {
@@ -143,7 +143,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			if (re.hasNextElement()) {
 				result = true;
 			}
-			
+
 			re.destroy();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -156,14 +156,17 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			final long domainObjectID) {
 		final int domainObjectIDFieldNumber = domainObjectStructure
 				.getDomainObjectIDFieldNumber();
+
 		RecordFilter domainObjectIDFilter = new RecordFilter() {
-			public boolean matches(byte[] arg0) {
-				DataTypeAndValuePair[] data = getDataTypeAndValuePairsFrom(arg0);
-				Long id = (Long) data[domainObjectIDFieldNumber].getValue();
-				long currentDomainObjectID = id.longValue();
-				return (currentDomainObjectID == domainObjectID);
+			public boolean matches(byte[] rawData) {
+				DataTypeAndValuePair[] data = getDataTypeAndValuePairsFrom(rawData);
+
+				long id = ((Long) data[domainObjectIDFieldNumber].getValue())
+						.longValue();
+				return (id == domainObjectID);
 			}
 		};
+
 		return domainObjectIDFilter;
 	}
 
