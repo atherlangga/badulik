@@ -54,14 +54,17 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		DataTypeAndValuePair[] result = new DataTypeAndValuePair[fieldSize];
 
 		try {
-			DataInputStream wrapper = new DataInputStream(
-					new ByteArrayInputStream(rawData));
+			ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
+			DataInputStream wrapper = new DataInputStream(reader);
 			for (int i = 0; i < fieldSize; i++) {
 				DataType type = DataType.fromInteger(wrapper.readInt());
 				Object val = readValueFrom(wrapper, type);
 
 				result[i] = new DataTypeAndValuePair(type, val);
 			}
+			
+			reader.close();
+			wrapper.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -70,8 +73,8 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	}
 
 	private Object readValueFrom(DataInputStream wrapper, DataType type) {
-		Object value = null;
 		try {
+			Object value;
 			if (type.equals(DataType.INT)) {
 				value = new Integer(wrapper.readInt());
 			} else if (type.equals(DataType.LONG)) {
@@ -132,19 +135,21 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public boolean isExist(long domainObjectID) {
 		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
-
+		boolean result = false;
 		try {
 			RecordEnumeration re = RecordStoresManager.recordStoreFor(
 					storageName).enumerateRecords(domainObjectIDFilter, null,
 					false);
 			if (re.hasNextElement()) {
-				return true;
+				result = true;
 			}
+			
+			re.destroy();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		}
 
-		return false;
+		return result;
 	}
 
 	private RecordFilter getDomainObjectIDRecordFilterFor(
@@ -164,12 +169,12 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	private int getRecordIDForDomainObjectID(long domainObjectID) {
 		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
-
 		try {
 			RecordEnumeration re = RecordStoresManager.recordStoreFor(
 					storageName).enumerateRecords(domainObjectIDFilter, null,
 					false);
 			if (re.hasNextElement()) {
+				re.destroy();
 				return re.nextRecordId();
 			}
 		} catch (RecordStoreNotOpenException e) {
@@ -198,11 +203,15 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		try {
 			RecordStoresManager.recordStoreFor(storageName).addRecord(rawData,
 					0, rawData.length);
+			writer.close();
+			wrapper.close();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreFullException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -252,11 +261,15 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 			int recordID = getRecordIDForDomainObjectID(domainObjectID);
 			RecordStoresManager.recordStoreFor(storageName).setRecord(recordID,
 					rawData, 0, rawData.length);
+			writer.close();
+			wrapper.close();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreFullException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -279,6 +292,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 				long domainObjectID = id.longValue();
 				result[i] = domainObjectID;
 			}
+			re.destroy();
 
 			return result;
 		} catch (RecordStoreNotOpenException e) {
