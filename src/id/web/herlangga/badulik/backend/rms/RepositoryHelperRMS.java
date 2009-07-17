@@ -173,12 +173,14 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	private int getRecordIDForDomainObjectID(long domainObjectID) {
 		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
 		try {
+			int result = -1;
 			RecordEnumeration re = RecordStoresManager.recordStoreFor(
 					storageName).enumerateRecords(domainObjectIDFilter, null,
 					false);
 			if (re.hasNextElement()) {
+				result = re.nextRecordId();
 				re.destroy();
-				return re.nextRecordId();
+				return result;
 			}
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
