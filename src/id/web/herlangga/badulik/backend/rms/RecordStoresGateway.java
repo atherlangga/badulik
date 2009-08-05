@@ -14,7 +14,7 @@ import javax.microedition.rms.RecordStoreNotOpenException;
  * @author angga
  * 
  */
-public final class RecordStoresManager {
+final class RecordStoresGateway {
 	private static Hashtable recordStores = new Hashtable();
 
 	/**
@@ -25,7 +25,7 @@ public final class RecordStoresManager {
 	 * @return existing {@link RecordStore} with specified name, or new
 	 *         {@link RecordStore} if not exist yet.
 	 */
-	public static RecordStore recordStoreFor(String repositoryName) {
+	static RecordStore recordStoreFor(String repositoryName) {
 		if (!recordStores.containsKey(repositoryName)) {
 			RecordStore newRecordStore = createRecordStore(repositoryName);
 			recordStores.put(repositoryName, newRecordStore);
@@ -41,7 +41,7 @@ public final class RecordStoresManager {
 	 *            name of the RecordStore to be deleted.
 	 * @return <code>true</code> if succeed, else <code>false</code>.
 	 */
-	public static boolean deleteRecordStore(String name) {
+	static boolean deleteRecordStore(String name) {
 		closeThenDelete(name);
 		if (recordStoreIsNotExist(name)) {
 			recordStores.remove(name);
@@ -59,7 +59,7 @@ public final class RecordStoresManager {
 	 * @return <code>true</code> if {@link RecordStore} with specified name is
 	 *         not exist, else <code>false</code>.
 	 */
-	public static boolean isExist(String name) {
+	static boolean isExist(String name) {
 		return !recordStoreIsNotExist(name);
 	}
 

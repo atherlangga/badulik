@@ -1,6 +1,5 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.backend.rms.RecordStoresManager;
 import id.web.herlangga.badulik.backend.rms.RepositoryHelperRMS;
 import id.web.herlangga.badulik.definition.Structure;
 
@@ -21,7 +20,4 @@ public final class BadulikService {
 		throw new IllegalStateException("Invalid selected Backend.");
 	}
 
-	public static void drop(String repositoryName) {
-		RecordStoresManager.deleteRecordStore(repositoryName);
-	}
 }

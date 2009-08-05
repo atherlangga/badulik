@@ -34,7 +34,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		if (isExist(domainObjectID)) {
 			try {
 				int recordID = getRecordIDForDomainObjectID(domainObjectID);
-				byte[] rawData = RecordStoresManager
+				byte[] rawData = RecordStoresGateway
 						.recordStoreFor(storageName).getRecord(recordID);
 				return getDataTypeAndValuePairsFrom(rawData);
 			} catch (RecordStoreNotOpenException e) {
@@ -100,7 +100,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public int nextAvailableDomainObjectID() {
 		try {
-			return RecordStoresManager.recordStoreFor(storageName)
+			return RecordStoresGateway.recordStoreFor(storageName)
 					.getNextRecordID();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -114,7 +114,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 	public void removeRecord(long domainObjectID) {
 		try {
 			int recordID = getRecordIDForDomainObjectID(domainObjectID);
-			RecordStoresManager.recordStoreFor(storageName).deleteRecord(
+			RecordStoresGateway.recordStoreFor(storageName).deleteRecord(
 					recordID);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -137,7 +137,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
 		boolean result = false;
 		try {
-			RecordEnumeration re = RecordStoresManager.recordStoreFor(
+			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					storageName).enumerateRecords(domainObjectIDFilter, null,
 					false);
 			if (re.hasNextElement()) {
@@ -174,7 +174,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
 		try {
 			int result = -1;
-			RecordEnumeration re = RecordStoresManager.recordStoreFor(
+			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					storageName).enumerateRecords(domainObjectIDFilter, null,
 					false);
 			if (re.hasNextElement()) {
@@ -206,7 +206,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 		byte[] rawData = writer.toByteArray();
 		try {
-			RecordStoresManager.recordStoreFor(storageName).addRecord(rawData,
+			RecordStoresGateway.recordStoreFor(storageName).addRecord(rawData,
 					0, rawData.length);
 			writer.close();
 			wrapper.close();
@@ -264,7 +264,7 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 		byte[] rawData = writer.toByteArray();
 		try {
 			int recordID = getRecordIDForDomainObjectID(domainObjectID);
-			RecordStoresManager.recordStoreFor(storageName).setRecord(recordID,
+			RecordStoresGateway.recordStoreFor(storageName).setRecord(recordID,
 					rawData, 0, rawData.length);
 			writer.close();
 			wrapper.close();
@@ -282,13 +282,13 @@ public class RepositoryHelperRMS implements RepositoryHelper {
 
 	public long[] findAllDomainObjectIDs() {
 		try {
-			RecordEnumeration re = RecordStoresManager.recordStoreFor(
+			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					storageName).enumerateRecords(null, null, false);
 			int total = re.numRecords();
 			long[] result = new long[total];
 
 			for (int i = 0; i < total; i++) {
-				byte[] rawData = RecordStoresManager
+				byte[] rawData = RecordStoresGateway
 						.recordStoreFor(storageName).getRecord(
 								re.nextRecordId());
 				DataTypeAndValuePair[] data = getDataTypeAndValuePairsFrom(rawData);

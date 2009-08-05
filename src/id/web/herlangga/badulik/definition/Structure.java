@@ -32,13 +32,6 @@ public class Structure {
 		return field.getFieldType();
 	}
 
-	public final Field[] toArray() {
-		Field[] arrayOfFields = new Field[fieldsSize()];
-		fields.copyInto(arrayOfFields);
-
-		return arrayOfFields;
-	}
-
 	public int fieldsSize() {
 		return fields.size();
 	}
