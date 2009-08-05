@@ -1,7 +1,7 @@
 package id.web.herlangga.badulik.backend.rms;
 
 import id.web.herlangga.badulik.DomainObjectFactory;
-import id.web.herlangga.badulik.RepositoryHelper;
+import id.web.herlangga.badulik.RepositoryWorker;
 import id.web.herlangga.badulik.definition.DataType;
 import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
 import id.web.herlangga.badulik.definition.Structure;
@@ -20,11 +20,11 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
-public class RepositoryHelperRMS implements RepositoryHelper {
+public class RepositoryWorkerRMS implements RepositoryWorker {
 	private String storageName;
 	private Structure domainObjectStructure;
 
-	public RepositoryHelperRMS(String storageName,
+	public RepositoryWorkerRMS(String storageName,
 			Structure domainObjectStructure) {
 		this.storageName = storageName;
 		this.domainObjectStructure = domainObjectStructure;

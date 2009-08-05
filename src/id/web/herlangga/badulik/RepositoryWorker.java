@@ -9,7 +9,7 @@ import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
  * @author angga
  * 
  */
-public interface RepositoryHelper {
+public interface RepositoryWorker {
 	/**
 	 * Fetch data from specified Domain Object ID.
 	 * 

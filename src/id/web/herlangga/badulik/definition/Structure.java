@@ -7,7 +7,7 @@ public class Structure {
 	private Field domainObjectIDField;
 
 	public Structure(int domainObjectIDFieldNumber) {
-		this.fields = new Vector(5);
+		this.fields = new Vector();
 		this.domainObjectIDField = new Field(domainObjectIDFieldNumber,
 				DataType.LONG);
 
