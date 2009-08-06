@@ -3,13 +3,12 @@ package id.web.herlangga.badulik;
 import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
 
 /**
- * Provides common functionality for Repository. To work properly, it needs to
- * supplied with the Structure of the Domain Object.
+ * Domain Object Repository.
  * 
  * @author angga
  * 
  */
-public interface RepositoryWorker {
+public interface ObjectRepository {
 	/**
 	 * Fetch data from specified Domain Object ID.
 	 * 
@@ -18,7 +17,7 @@ public interface RepositoryWorker {
 	 * @return array of {@link DataTypeAndValuePair} contains data for specified
 	 *         Domain Object ID.
 	 */
-	public DataTypeAndValuePair[] findRecord(long domainObjectID);
+	public DataTypeAndValuePair[] find(long domainObjectID);
 
 	/**
 	 * Store Domain Object with specified data. Based on the Domain Object ID,
@@ -31,7 +30,7 @@ public interface RepositoryWorker {
 	 *            array of {@link DataTypeAndValuePair} contains data for the
 	 *            specified Domain Object.
 	 */
-	public void saveRecord(long domainObjectID, DataTypeAndValuePair[] data);
+	public void save(long domainObjectID, DataTypeAndValuePair[] data);
 
 	/**
 	 * Delete specified Domain Object based on its ID.
@@ -39,7 +38,7 @@ public interface RepositoryWorker {
 	 * @param domainObjectID
 	 *            Domain Object ID to be deleted from storage.
 	 */
-	public void removeRecord(long domainObjectID);
+	public void remove(long domainObjectID);
 
 	/**
 	 * Check whether specified Domain Object is exist in the storage or not.
@@ -54,9 +53,9 @@ public interface RepositoryWorker {
 	/**
 	 * Find and return all Domain Object IDs exist in the storage.
 	 * 
-	 * @return array of int contains Domain Object IDs.
+	 * @return array of long contains Domain Object IDs.
 	 */
-	public long[] findAllDomainObjectIDs();
+	public long[] fetchAllIDs();
 
 	/**
 	 * Get available ID, useful when generating new Domain Object ID. However,
@@ -65,7 +64,7 @@ public interface RepositoryWorker {
 	 * 
 	 * @return available ID on the storage.
 	 */
-	public int nextAvailableDomainObjectID();
+	public long nextAvailableID();
 
 	/**
 	 * Build Domain Object with specified Domain Object ID.
@@ -73,10 +72,9 @@ public interface RepositoryWorker {
 	 * @param domainObjectID
 	 *            Domain Object ID to be built.
 	 * @param factory
-	 *            {@link DomainObjectFactory} to be delegated the job of the
-	 *            building.
+	 *            {@link ObjectFactory} to be delegated the job of the Domain
+	 *            Object building.
 	 * @return Domain Object with specified Domain Object ID.
 	 */
-	public Object buildDomainObject(long domainObjectID,
-			DomainObjectFactory factory);
+	public Object build(long domainObjectID, ObjectFactory factory);
 }

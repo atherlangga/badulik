@@ -1,7 +1,7 @@
 package id.web.herlangga.badulik.backend.rms;
 
-import id.web.herlangga.badulik.DomainObjectFactory;
-import id.web.herlangga.badulik.RepositoryWorker;
+import id.web.herlangga.badulik.ObjectFactory;
+import id.web.herlangga.badulik.ObjectRepository;
 import id.web.herlangga.badulik.definition.DataType;
 import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
 import id.web.herlangga.badulik.definition.Structure;
@@ -20,22 +20,21 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotOpenException;
 
-public class RepositoryWorkerRMS implements RepositoryWorker {
-	private String storageName;
-	private Structure domainObjectStructure;
+public class ObjectRepositoryRMS implements ObjectRepository {
+	private String recordStoreName;
+	private Structure objectStructure;
 
-	public RepositoryWorkerRMS(String storageName,
-			Structure domainObjectStructure) {
-		this.storageName = storageName;
-		this.domainObjectStructure = domainObjectStructure;
+	public ObjectRepositoryRMS(String recordStoreName, Structure objectStructure) {
+		this.recordStoreName = recordStoreName;
+		this.objectStructure = objectStructure;
 	}
 
-	public DataTypeAndValuePair[] findRecord(long domainObjectID) {
-		if (isExist(domainObjectID)) {
+	public DataTypeAndValuePair[] find(long id) {
+		if (isExist(id)) {
 			try {
-				int recordID = getRecordIDForDomainObjectID(domainObjectID);
-				byte[] rawData = RecordStoresGateway
-						.recordStoreFor(storageName).getRecord(recordID);
+				int recordID = getRecordIDForDomainObjectID(id);
+				byte[] rawData = RecordStoresGateway.recordStoreFor(
+						recordStoreName).getRecord(recordID);
 				return getDataTypeAndValuePairsFrom(rawData);
 			} catch (RecordStoreNotOpenException e) {
 				e.printStackTrace();
@@ -50,7 +49,7 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 	}
 
 	private DataTypeAndValuePair[] getDataTypeAndValuePairsFrom(byte[] rawData) {
-		int fieldSize = domainObjectStructure.fieldsSize();
+		int fieldSize = objectStructure.fieldsSize();
 		DataTypeAndValuePair[] result = new DataTypeAndValuePair[fieldSize];
 
 		try {
@@ -98,9 +97,9 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
-	public int nextAvailableDomainObjectID() {
+	public long nextAvailableID() {
 		try {
-			return RecordStoresGateway.recordStoreFor(storageName)
+			return RecordStoresGateway.recordStoreFor(recordStoreName)
 					.getNextRecordID();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -111,10 +110,10 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 		throw new RuntimeException();
 	}
 
-	public void removeRecord(long domainObjectID) {
+	public void remove(long id) {
 		try {
-			int recordID = getRecordIDForDomainObjectID(domainObjectID);
-			RecordStoresGateway.recordStoreFor(storageName).deleteRecord(
+			int recordID = getRecordIDForDomainObjectID(id);
+			RecordStoresGateway.recordStoreFor(recordStoreName).deleteRecord(
 					recordID);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -125,21 +124,21 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 		}
 	}
 
-	public void saveRecord(long domainObjectID, DataTypeAndValuePair[] data) {
-		if (isExist(domainObjectID)) {
-			editExistingRecord(domainObjectID, data);
+	public void save(long id, DataTypeAndValuePair[] data) {
+		if (isExist(id)) {
+			editExistingRecord(id, data);
 		} else {
 			insertNewRecord(data);
 		}
 	}
 
-	public boolean isExist(long domainObjectID) {
-		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
+	public boolean isExist(long id) {
+		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(id);
 		boolean result = false;
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
-					storageName).enumerateRecords(domainObjectIDFilter, null,
-					false);
+					recordStoreName).enumerateRecords(domainObjectIDFilter,
+					null, false);
 			if (re.hasNextElement()) {
 				result = true;
 			}
@@ -154,7 +153,7 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 
 	private RecordFilter getDomainObjectIDRecordFilterFor(
 			final long domainObjectID) {
-		final int domainObjectIDFieldNumber = domainObjectStructure
+		final int domainObjectIDFieldNumber = objectStructure
 				.getDomainObjectIDFieldNumber();
 
 		RecordFilter domainObjectIDFilter = new RecordFilter() {
@@ -175,8 +174,8 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 		try {
 			int result = -1;
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
-					storageName).enumerateRecords(domainObjectIDFilter, null,
-					false);
+					recordStoreName).enumerateRecords(domainObjectIDFilter,
+					null, false);
 			if (re.hasNextElement()) {
 				result = re.nextRecordId();
 				re.destroy();
@@ -206,8 +205,8 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 
 		byte[] rawData = writer.toByteArray();
 		try {
-			RecordStoresGateway.recordStoreFor(storageName).addRecord(rawData,
-					0, rawData.length);
+			RecordStoresGateway.recordStoreFor(recordStoreName).addRecord(
+					rawData, 0, rawData.length);
 			writer.close();
 			wrapper.close();
 		} catch (RecordStoreNotOpenException e) {
@@ -264,8 +263,8 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 		byte[] rawData = writer.toByteArray();
 		try {
 			int recordID = getRecordIDForDomainObjectID(domainObjectID);
-			RecordStoresGateway.recordStoreFor(storageName).setRecord(recordID,
-					rawData, 0, rawData.length);
+			RecordStoresGateway.recordStoreFor(recordStoreName).setRecord(
+					recordID, rawData, 0, rawData.length);
 			writer.close();
 			wrapper.close();
 		} catch (RecordStoreNotOpenException e) {
@@ -280,19 +279,18 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 
 	}
 
-	public long[] findAllDomainObjectIDs() {
+	public long[] fetchAllIDs() {
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
-					storageName).enumerateRecords(null, null, false);
+					recordStoreName).enumerateRecords(null, null, false);
 			int total = re.numRecords();
 			long[] result = new long[total];
 
 			for (int i = 0; i < total; i++) {
-				byte[] rawData = RecordStoresGateway
-						.recordStoreFor(storageName).getRecord(
-								re.nextRecordId());
+				byte[] rawData = RecordStoresGateway.recordStoreFor(
+						recordStoreName).getRecord(re.nextRecordId());
 				DataTypeAndValuePair[] data = getDataTypeAndValuePairsFrom(rawData);
-				Long id = (Long) data[domainObjectStructure
+				Long id = (Long) data[objectStructure
 						.getDomainObjectIDFieldNumber()].getValue();
 				long domainObjectID = id.longValue();
 				result[i] = domainObjectID;
@@ -311,9 +309,8 @@ public class RepositoryWorkerRMS implements RepositoryWorker {
 		throw new RuntimeException();
 	}
 
-	public Object buildDomainObject(long domainObjectID,
-			DomainObjectFactory factory) {
-		DataTypeAndValuePair[] data = findRecord(domainObjectID);
+	public Object build(long id, ObjectFactory factory) {
+		DataTypeAndValuePair[] data = find(id);
 		Object domainObject = factory.createDomainObject(data);
 
 		return domainObject;

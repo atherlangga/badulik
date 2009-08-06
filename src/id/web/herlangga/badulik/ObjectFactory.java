@@ -8,7 +8,7 @@ import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
  * @author angga
  * 
  */
-public interface DomainObjectFactory {
+public interface ObjectFactory {
 	/**
 	 * Create domain object with specified data.
 	 * 
