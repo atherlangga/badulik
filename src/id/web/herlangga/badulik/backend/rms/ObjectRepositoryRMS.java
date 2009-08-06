@@ -24,7 +24,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	private String recordStoreName;
 	private Structure objectStructure;
 
-	public ObjectRepositoryRMS(String recordStoreName, Structure objectStructure) {
+	ObjectRepositoryRMS(String recordStoreName, Structure objectStructure) {
 		this.recordStoreName = recordStoreName;
 		this.objectStructure = objectStructure;
 	}
@@ -172,12 +172,11 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	private int getRecordIDForDomainObjectID(long domainObjectID) {
 		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
 		try {
-			int result = -1;
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					recordStoreName).enumerateRecords(domainObjectIDFilter,
 					null, false);
 			if (re.hasNextElement()) {
-				result = re.nextRecordId();
+				int result = re.nextRecordId();
 				re.destroy();
 				return result;
 			}

@@ -9,11 +9,9 @@ public class RepositoryManagerRMS implements RepositoryManager {
 	public ObjectRepository getRepository(String name, Structure objectStructure) {
 		return new ObjectRepositoryRMS(name, objectStructure);
 	}
-	
+
 	public void dropRepository(String name) {
 		RecordStoresGateway.deleteRecordStore(name);
 	}
-
-	
 
 }
