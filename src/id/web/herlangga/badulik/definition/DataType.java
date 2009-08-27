@@ -8,7 +8,7 @@ public class DataType {
 	public static final DataType DATE = new DataType(4);
 	public static final DataType BOOL = new DataType(5);
 	
-	private int type;
+	private final int type;
 	
 	protected DataType(int type) {
 		this.type = type;

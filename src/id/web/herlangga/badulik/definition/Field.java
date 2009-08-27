@@ -1,8 +1,8 @@
 package id.web.herlangga.badulik.definition;
 
 class Field {
-	private int fieldNumber;
-	private DataType type;
+	private final int fieldNumber;
+	private final DataType type;
 	
 	Field(int fieldNumber, DataType fieldType) {
 		this.fieldNumber = fieldNumber;

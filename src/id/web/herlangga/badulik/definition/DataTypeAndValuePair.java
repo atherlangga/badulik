@@ -1,8 +1,8 @@
 package id.web.herlangga.badulik.definition;
 
 public class DataTypeAndValuePair {
-	private DataType dataType;
-	private Object value;
+	private final DataType dataType;
+	private final Object value;
 	
 	public DataTypeAndValuePair(DataType dataType, Object value) {
 		this.dataType = dataType;
