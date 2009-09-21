@@ -3,34 +3,34 @@ package id.web.herlangga.badulik.definition;
 import java.util.Vector;
 
 public class Structure {
-	private static final int ID_FIELDNUMBER = 0;
-	private static final DataType ID_FIELDTYPE = DataType.LONG;
-	
-	private final Vector fields = new Vector();
+	private static final int ID_FIELD_NUMBER = 0;
+	private static final DataType ID_FIELD_TYPE = DataType.LONG;
+
+	private final Vector fields;
 
 	private Structure() {
+		fields = new Vector();
 	}
 
-	public static Structure createStructure(int domainObjectIDFieldNumber) {
+	public static Structure createStructureWithIDAtFieldNumber(
+			int objectIDFieldNumber) {
 		Structure newStructure = new Structure();
-		Field domainObjectIDField = new Field(domainObjectIDFieldNumber,
-				DataType.LONG);
-		newStructure.fields.addElement(domainObjectIDField);
+		newStructure.addField(objectIDFieldNumber, ID_FIELD_TYPE);
 
 		return newStructure;
 	}
 
-	public void add(int fieldNumber, DataType fieldType) {
+	public void addField(int fieldNumber, DataType fieldType) {
 		Field field = new Field(fieldNumber, fieldType);
 		fields.addElement(field);
 	}
 
-	public int getDomainObjectIDFieldNumber() {
-		return ID_FIELDNUMBER;
+	public int getObjectIDFieldNumber() {
+		return ID_FIELD_NUMBER;
 	}
 
-	public final DataType getDomainObjectIDDataType() {
-		return ID_FIELDTYPE;
+	public final DataType getObjectIDDataType() {
+		return ID_FIELD_TYPE;
 	}
 
 	public final DataType getDataTypeOfFieldNumber(int number) {

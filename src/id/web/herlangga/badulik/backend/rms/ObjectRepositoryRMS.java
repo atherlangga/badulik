@@ -1,28 +1,16 @@
 package id.web.herlangga.badulik.backend.rms;
 
-import id.web.herlangga.badulik.ObjectFactory;
-import id.web.herlangga.badulik.ObjectRepository;
-import id.web.herlangga.badulik.definition.DataType;
-import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
-import id.web.herlangga.badulik.definition.Structure;
+import id.web.herlangga.badulik.*;
+import id.web.herlangga.badulik.definition.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 
-import javax.microedition.rms.InvalidRecordIDException;
-import javax.microedition.rms.RecordEnumeration;
-import javax.microedition.rms.RecordFilter;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotOpenException;
+import javax.microedition.rms.*;
 
 public class ObjectRepositoryRMS implements ObjectRepository {
-	private String recordStoreName;
-	private Structure objectStructure;
+	private final String recordStoreName;
+	private final Structure objectStructure;
 
 	ObjectRepositoryRMS(String recordStoreName, Structure objectStructure) {
 		this.recordStoreName = recordStoreName;
@@ -107,7 +95,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			e.printStackTrace();
 		}
 
-		throw new RuntimeException();
+		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
 	public void remove(long id) {
@@ -154,7 +142,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	private RecordFilter getDomainObjectIDRecordFilterFor(
 			final long domainObjectID) {
 		final int domainObjectIDFieldNumber = objectStructure
-				.getDomainObjectIDFieldNumber();
+				.getObjectIDFieldNumber();
 
 		RecordFilter domainObjectIDFilter = new RecordFilter() {
 			public boolean matches(byte[] rawData) {
@@ -222,7 +210,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	private void writeTypeAndObjectTo(DataOutputStream wrapper, DataType type,
 			Object value) {
 		try {
-			wrapper.writeInt(type.toInteger());
+			wrapper.writeInt(type.typeAsInteger());
 
 			if (type == DataType.INT) {
 				Integer toBeWritten = (Integer) value;
@@ -290,7 +278,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 						recordStoreName).getRecord(re.nextRecordId());
 				DataTypeAndValuePair[] data = getDataTypeAndValuePairsFrom(rawData);
 				Long id = (Long) data[objectStructure
-						.getDomainObjectIDFieldNumber()].getValue();
+						.getObjectIDFieldNumber()].getValue();
 				long domainObjectID = id.longValue();
 				result[i] = domainObjectID;
 			}
