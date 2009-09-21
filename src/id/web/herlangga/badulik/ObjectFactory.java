@@ -3,18 +3,18 @@ package id.web.herlangga.badulik;
 import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
 
 /**
- * Domain Object creator.
+ * Object creator.
  * 
  * @author angga
  * 
  */
 public interface ObjectFactory {
 	/**
-	 * Create domain object with specified data.
+	 * Create object with specified data.
 	 * 
 	 * @param data
-	 *            Data for Domain Object.
-	 * @return Domain Object.
+	 *            Data for object.
+	 * @return created object.
 	 */
 	public Object createDomainObject(DataTypeAndValuePair[] data);
 }

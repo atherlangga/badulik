@@ -3,78 +3,78 @@ package id.web.herlangga.badulik;
 import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
 
 /**
- * Domain Object Repository.
+ * Object repository.
  * 
  * @author angga
  * 
  */
 public interface ObjectRepository {
 	/**
-	 * Fetch data from specified Domain Object ID.
+	 * Fetch data based on specified object ID.
 	 * 
-	 * @param domainObjectID
-	 *            Domain Object ID whose data is needed.
+	 * @param objectID
+	 *            Object ID whose data is going to be fetched.
 	 * @return array of {@link DataTypeAndValuePair} contains data for specified
-	 *         Domain Object ID.
+	 *         object ID.
 	 */
-	public DataTypeAndValuePair[] find(long domainObjectID);
+	public DataTypeAndValuePair[] find(long objectID);
 
 	/**
-	 * Store Domain Object with specified data. Based on the Domain Object ID,
-	 * it will make decision whether to insert new record or edit existing
-	 * record.
+	 * Store object with specified data. Based on the supplied object ID,
+	 * {@link ObjectRepository} will make decision whether to insert new record
+	 * or edit existing record.
 	 * 
-	 * @param domainObjectID
-	 *            Domain Object ID.
+	 * @param objectID
+	 *            Object ID.
 	 * @param data
-	 *            array of {@link DataTypeAndValuePair} contains data for the
-	 *            specified Domain Object.
+	 *            Array of {@link DataTypeAndValuePair} contains data for the
+	 *            specified object.
 	 */
-	public void save(long domainObjectID, DataTypeAndValuePair[] data);
+	public void save(long objectID, DataTypeAndValuePair[] data);
 
 	/**
-	 * Delete specified Domain Object based on its ID.
+	 * Delete specified object based on its ID.
 	 * 
-	 * @param domainObjectID
-	 *            Domain Object ID to be deleted from storage.
+	 * @param objectID
+	 *            Object ID to delete from storage.
 	 */
-	public void remove(long domainObjectID);
+	public void remove(long objectID);
 
 	/**
-	 * Check whether specified Domain Object is exist in the storage or not.
+	 * Check for object existance based on its ID.
 	 * 
-	 * @param domainObjectID
-	 *            Domain Object ID to identify every unique Domain Object.
-	 * @return <code>true</code> if specified Domain Object ID exist, else
+	 * @param objectID
+	 *            Object ID to search.
+	 * @return <code>true</code> if specified object ID exist, else
 	 *         <code>false</code>.
 	 */
-	public boolean isExist(long domainObjectID);
+	public boolean isExist(long objectID);
 
 	/**
-	 * Find and return all Domain Object IDs exist in the storage.
+	 * Find and return all object IDs exist in the storage.
 	 * 
-	 * @return array of long contains Domain Object IDs.
+	 * @return array of long contains object IDs.
 	 */
 	public long[] fetchAllIDs();
 
 	/**
-	 * Get available ID, useful when generating new Domain Object ID. However,
-	 * when the ID is retrieved, it is recommended to immediately save the
-	 * Domain Object to avoid collision with next caller of this function.
+	 * Get new and valid object ID. When the object ID is retrieved, it is
+	 * recommended to immediately save the object to avoid collision with the
+	 * next caller of this function.
 	 * 
-	 * @return available ID on the storage.
+	 * @return available object ID on the storage.
 	 */
 	public long nextAvailableID();
 
 	/**
-	 * Build Domain Object with specified Domain Object ID.
+	 * Build object with specified object ID.
 	 * 
-	 * @param domainObjectID
+	 * @param objectID
 	 *            Domain Object ID to be built.
 	 * @param factory
-	 *            {@link ObjectFactory} to be delegated the job of the Domain
-	 *            Object building.
-	 * @return Domain Object with specified Domain Object ID.
+	 *            {@link ObjectFactory} to be delegated the job of the object
+	 *            building.
+	 * @return Object with specified ID.
 	 */
-	public Object build(long domainObjectID, ObjectFactory factory);
+	public Object build(long objectID, ObjectFactory factory);
 }
