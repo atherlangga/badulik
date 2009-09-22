@@ -44,10 +44,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
 			DataInputStream wrapper = new DataInputStream(reader);
 			for (int i = 0; i < fieldSize; i++) {
-				Type type = Type.fromInteger(wrapper.readInt());
-				Object value = readValueFrom(wrapper, type);
-
-				result[i] = new Datum(type, value);
+				result[i] = readDatumFrom(wrapper);
 			}
 
 			reader.close();
@@ -58,26 +55,28 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 		return result;
 	}
-
-	private Object readValueFrom(DataInputStream wrapper, Type type) {
+	
+	private Datum readDatumFrom(DataInputStream wrapper) {
 		try {
-			Object value;
-			if (type.equals(Type.INT)) {
-				value = new Integer(wrapper.readInt());
-			} else if (type.equals(Type.LONG)) {
-				value = new Long(wrapper.readLong());
-			} else if (type.equals(Type.STRING)) {
-				value = wrapper.readUTF();
-			} else if (type.equals(Type.DATE)) {
-				value = new Date(wrapper.readLong());
-			} else if (type.equals(Type.BOOL)) {
-				value = new Boolean(wrapper.readBoolean());
+			Type datumType = Type.of(wrapper.readInt());
+			Object datumValue = new Object();
+			
+			if (datumType == Type.INT) {
+				datumValue = new Integer(wrapper.readInt());
+			} else if (datumType == Type.LONG) {
+				datumValue = new Long(wrapper.readLong());
+			} else if (datumType == Type.STRING) {
+				datumValue = wrapper.readUTF();
+			} else if (datumType == Type.DATE) {
+				datumValue = new Date(wrapper.readLong());
+			} else if (datumType == Type.BOOL) {
+				datumValue = new Boolean(wrapper.readBoolean());
 			} else {
 				throw new IllegalArgumentException(
 						"Object structure is not valid.");
 			}
 
-			return value;
+			return new Datum(datumType, datumValue);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -140,13 +139,13 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	}
 
 	private RecordFilter createRecordFilterFor(final long objectId) {
-		final int objectIFieldNumber = objectStructure.objectIdFieldNumber();
+		final int objectIdFieldNumber = objectStructure.objectIdFieldNumber();
 
 		RecordFilter domainObjectIdFilter = new RecordFilter() {
 			public boolean matches(byte[] rawData) {
 				Datum[] data = generateDataFrom(rawData);
 
-				long id = ((Long) data[objectIFieldNumber].value())
+				long id = ((Long) data[objectIdFieldNumber].value())
 						.longValue();
 				return (id == objectId);
 			}
@@ -188,7 +187,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private byte[] generateRawDataFrom(Datum[] data) {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
@@ -197,7 +196,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		for (int i = 0; i < dataFieldLength; i++) {
 			writeDatumTo(wrapper, data[i]);
 		}
-		
+
 		byte[] result = writer.toByteArray();
 		try {
 			writer.close();
@@ -205,7 +204,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
 
@@ -236,10 +235,10 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		}
 	}
 
-	private void editExistingRecord(long objectID, Datum[] data) {
+	private void editExistingRecord(long objectId, Datum[] data) {
 		byte[] rawData = generateRawDataFrom(data);
 		try {
-			int recordId = translateToRecordIdFrom(objectID);
+			int recordId = translateToRecordIdFrom(objectId);
 			RecordStoresGateway.recordStoreFor(recordStoreName).setRecord(
 					recordId, rawData, 0, rawData.length);
 		} catch (RecordStoreNotOpenException e) {
@@ -284,9 +283,9 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 	public Object build(long objectId, ObjectFactory factory) {
 		Datum[] data = find(objectId);
-		Object domainObject = factory.createDomainObject(data);
+		Object built = factory.createObject(data);
 
-		return domainObject;
+		return built;
 	}
 
 }

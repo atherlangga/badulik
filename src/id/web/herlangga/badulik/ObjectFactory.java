@@ -1,6 +1,6 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.definition.Datum;
+import id.web.herlangga.badulik.definition.*;
 
 /**
  * Object creator.
@@ -16,5 +16,5 @@ public interface ObjectFactory {
 	 *            array of {@link Datum} contains object's states.
 	 * @return created object.
 	 */
-	public Object createDomainObject(Datum[] data);
+	public Object createObject(Datum[] data);
 }

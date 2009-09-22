@@ -13,7 +13,7 @@ public class Type {
 		this.type = type;
 	}
 
-	public static Type fromInteger(int integerValue) {
+	public static Type of(int integerValue) {
 		return new Type(integerValue);
 	}
 
