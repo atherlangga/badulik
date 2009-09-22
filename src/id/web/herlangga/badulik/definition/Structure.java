@@ -25,15 +25,15 @@ public class Structure {
 		fields.addElement(field);
 	}
 
-	public int getObjectIDFieldNumber() {
+	public int getObjectIdFieldNumber() {
 		return ID_FIELD_NUMBER;
 	}
 
-	public final Type getObjectIDDataType() {
+	public final Type getObjectIdFieldType() {
 		return ID_FIELD_TYPE;
 	}
 
-	public final Type getDataTypeOfFieldNumber(int number) {
+	public final Type getTypeOfFieldNumber(int number) {
 		Field field = (Field) fields.elementAt(number);
 		return field.getFieldType();
 	}

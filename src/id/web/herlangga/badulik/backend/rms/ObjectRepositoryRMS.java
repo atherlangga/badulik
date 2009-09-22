@@ -142,7 +142,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	private RecordFilter getDomainObjectIDRecordFilterFor(
 			final long domainObjectID) {
 		final int domainObjectIDFieldNumber = objectStructure
-				.getObjectIDFieldNumber();
+				.getObjectIdFieldNumber();
 
 		RecordFilter domainObjectIDFilter = new RecordFilter() {
 			public boolean matches(byte[] rawData) {
@@ -278,7 +278,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 						recordStoreName).getRecord(re.nextRecordId());
 				Datum[] data = getDataTypeAndValuePairsFrom(rawData);
 				Long id = (Long) data[objectStructure
-						.getObjectIDFieldNumber()].getValue();
+						.getObjectIdFieldNumber()].getValue();
 				long domainObjectID = id.longValue();
 				result[i] = domainObjectID;
 			}
