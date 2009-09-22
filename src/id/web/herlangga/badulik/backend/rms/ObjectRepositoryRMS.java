@@ -17,13 +17,13 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		this.objectStructure = objectStructure;
 	}
 
-	public Datum[] find(long id) {
-		if (isExist(id)) {
+	public Datum[] find(long objectId) {
+		if (isExist(objectId)) {
 			try {
-				int recordID = getRecordIDForDomainObjectID(id);
+				int recordId = translateToRecordIdFrom(objectId);
 				byte[] rawData = RecordStoresGateway.recordStoreFor(
-						recordStoreName).getRecord(recordID);
-				return getDataTypeAndValuePairsFrom(rawData);
+						recordStoreName).getRecord(recordId);
+				return generateDataFrom(rawData);
 			} catch (RecordStoreNotOpenException e) {
 				e.printStackTrace();
 			} catch (InvalidRecordIDException e) {
@@ -36,7 +36,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		return new Datum[0];
 	}
 
-	private Datum[] getDataTypeAndValuePairsFrom(byte[] rawData) {
+	private Datum[] generateDataFrom(byte[] rawData) {
 		int fieldSize = objectStructure.fieldsSize();
 		Datum[] result = new Datum[fieldSize];
 
@@ -45,9 +45,9 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			DataInputStream wrapper = new DataInputStream(reader);
 			for (int i = 0; i < fieldSize; i++) {
 				Type type = Type.fromInteger(wrapper.readInt());
-				Object val = readValueFrom(wrapper, type);
+				Object value = readValueFrom(wrapper, type);
 
-				result[i] = new Datum(type, val);
+				result[i] = new Datum(type, value);
 			}
 
 			reader.close();
@@ -85,7 +85,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
-	public long nextAvailableID() {
+	public long nextAvailableId() {
 		try {
 			return RecordStoresGateway.recordStoreFor(recordStoreName)
 					.getNextRecordID();
@@ -98,11 +98,11 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
-	public void remove(long id) {
+	public void remove(long objectId) {
 		try {
-			int recordID = getRecordIDForDomainObjectID(id);
+			int recordId = translateToRecordIdFrom(objectId);
 			RecordStoresGateway.recordStoreFor(recordStoreName).deleteRecord(
-					recordID);
+					recordId);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (InvalidRecordIDException e) {
@@ -112,21 +112,21 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		}
 	}
 
-	public void save(long id, Datum[] data) {
-		if (isExist(id)) {
-			editExistingRecord(id, data);
+	public void save(long objectId, Datum[] data) {
+		if (isExist(objectId)) {
+			editExistingRecord(objectId, data);
 		} else {
 			insertNewRecord(data);
 		}
 	}
 
-	public boolean isExist(long id) {
-		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(id);
+	public boolean isExist(long objectId) {
+		RecordFilter objectIdFilter = createRecordFilterFor(objectId);
 		boolean result = false;
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
-					recordStoreName).enumerateRecords(domainObjectIDFilter,
-					null, false);
+					recordStoreName).enumerateRecords(objectIdFilter, null,
+					false);
 			if (re.hasNextElement()) {
 				result = true;
 			}
@@ -139,26 +139,24 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		return result;
 	}
 
-	private RecordFilter getDomainObjectIDRecordFilterFor(
-			final long domainObjectID) {
-		final int domainObjectIDFieldNumber = objectStructure
-				.objectIdFieldNumber();
+	private RecordFilter createRecordFilterFor(final long objectId) {
+		final int objectIFieldNumber = objectStructure.objectIdFieldNumber();
 
-		RecordFilter domainObjectIDFilter = new RecordFilter() {
+		RecordFilter domainObjectIdFilter = new RecordFilter() {
 			public boolean matches(byte[] rawData) {
-				Datum[] data = getDataTypeAndValuePairsFrom(rawData);
+				Datum[] data = generateDataFrom(rawData);
 
-				long id = ((Long) data[domainObjectIDFieldNumber].value())
+				long id = ((Long) data[objectIFieldNumber].value())
 						.longValue();
-				return (id == domainObjectID);
+				return (id == objectId);
 			}
 		};
 
-		return domainObjectIDFilter;
+		return domainObjectIdFilter;
 	}
 
-	private int getRecordIDForDomainObjectID(long domainObjectID) {
-		RecordFilter domainObjectIDFilter = getDomainObjectIDRecordFilterFor(domainObjectID);
+	private int translateToRecordIdFrom(long objectId) {
+		RecordFilter domainObjectIDFilter = createRecordFilterFor(objectId);
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					recordStoreName).enumerateRecords(domainObjectIDFilter,
@@ -174,58 +172,62 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			e.printStackTrace();
 		}
 
-		throw new IllegalArgumentException(
-				"Invalid Domain Object ID specified.");
+		throw new IllegalArgumentException("Invalid object ID specified.");
 	}
 
 	private void insertNewRecord(Datum[] data) {
-		ByteArrayOutputStream writer = new ByteArrayOutputStream();
-		DataOutputStream wrapper = new DataOutputStream(writer);
-
-		int dataFieldLength = data.length;
-		for (int i = 0; i < dataFieldLength; i++) {
-			Type type = data[i].type();
-			Object value = data[i].value();
-
-			writeTypeAndObjectTo(wrapper, type, value);
-		}
-
-		byte[] rawData = writer.toByteArray();
+		byte[] rawData = generateRawDataFrom(data);
 		try {
 			RecordStoresGateway.recordStoreFor(recordStoreName).addRecord(
 					rawData, 0, rawData.length);
-			writer.close();
-			wrapper.close();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreFullException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private byte[] generateRawDataFrom(Datum[] data) {
+		ByteArrayOutputStream writer = new ByteArrayOutputStream();
+		DataOutputStream wrapper = new DataOutputStream(writer);
+
+		int dataFieldLength = data.length;
+		for (int i = 0; i < dataFieldLength; i++) {
+			writeDatumTo(wrapper, data[i]);
+		}
+		
+		byte[] result = writer.toByteArray();
+		try {
+			writer.close();
+			wrapper.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return result;
 	}
 
-	private void writeTypeAndObjectTo(DataOutputStream wrapper, Type type,
-			Object value) {
+	private void writeDatumTo(DataOutputStream wrapper, Datum datum) {
 		try {
+			Type type = datum.type();
 			wrapper.writeInt(type.typeAsInteger());
 
 			if (type == Type.INT) {
-				Integer toBeWritten = (Integer) value;
+				Integer toBeWritten = (Integer) datum.value();
 				wrapper.writeInt(toBeWritten.intValue());
 			} else if (type == Type.LONG) {
-				Long toBeWritten = (Long) value;
+				Long toBeWritten = (Long) datum.value();
 				wrapper.writeLong(toBeWritten.longValue());
 			} else if (type == Type.STRING) {
-				String toBeWritten = (String) value;
+				String toBeWritten = (String) datum.value();
 				wrapper.writeUTF(toBeWritten);
 			} else if (type == Type.DATE) {
-				Date toBeWritten = (Date) value;
+				Date toBeWritten = (Date) datum.value();
 				wrapper.writeLong(toBeWritten.getTime());
 			} else if (type == Type.BOOL) {
-				Boolean toBeWritten = (Boolean) value;
+				Boolean toBeWritten = (Boolean) datum.value();
 				wrapper.writeBoolean(toBeWritten.booleanValue());
 			}
 
@@ -234,39 +236,23 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		}
 	}
 
-	private void editExistingRecord(long domainObjectID,
-			Datum[] data) {
-		ByteArrayOutputStream writer = new ByteArrayOutputStream();
-		DataOutputStream wrapper = new DataOutputStream(writer);
-
-		int dataFieldLength = data.length;
-		for (int i = 0; i < dataFieldLength; i++) {
-			Type type = data[i].type();
-			Object value = data[i].value();
-
-			writeTypeAndObjectTo(wrapper, type, value);
-		}
-
-		byte[] rawData = writer.toByteArray();
+	private void editExistingRecord(long objectID, Datum[] data) {
+		byte[] rawData = generateRawDataFrom(data);
 		try {
-			int recordID = getRecordIDForDomainObjectID(domainObjectID);
+			int recordId = translateToRecordIdFrom(objectID);
 			RecordStoresGateway.recordStoreFor(recordStoreName).setRecord(
-					recordID, rawData, 0, rawData.length);
-			writer.close();
-			wrapper.close();
+					recordId, rawData, 0, rawData.length);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreFullException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 	}
 
-	public long[] fetchAllIDs() {
+	public long[] fetchAllIds() {
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					recordStoreName).enumerateRecords(null, null, false);
@@ -276,11 +262,11 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			for (int i = 0; i < total; i++) {
 				byte[] rawData = RecordStoresGateway.recordStoreFor(
 						recordStoreName).getRecord(re.nextRecordId());
-				Datum[] data = getDataTypeAndValuePairsFrom(rawData);
-				Long id = (Long) data[objectStructure
-						.objectIdFieldNumber()].value();
-				long domainObjectID = id.longValue();
-				result[i] = domainObjectID;
+				Datum[] data = generateDataFrom(rawData);
+				Long id = (Long) data[objectStructure.objectIdFieldNumber()]
+						.value();
+				long objectId = id.longValue();
+				result[i] = objectId;
 			}
 			re.destroy();
 
@@ -296,8 +282,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException();
 	}
 
-	public Object build(long id, ObjectFactory factory) {
-		Datum[] data = find(id);
+	public Object build(long objectId, ObjectFactory factory) {
+		Datum[] data = find(objectId);
 		Object domainObject = factory.createDomainObject(data);
 
 		return domainObject;

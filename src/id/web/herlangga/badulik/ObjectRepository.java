@@ -55,7 +55,7 @@ public interface ObjectRepository {
 	 * 
 	 * @return array of long contains object IDs.
 	 */
-	public long[] fetchAllIDs();
+	public long[] fetchAllIds();
 
 	/**
 	 * Get new and valid object ID. When the object ID is retrieved, it is
@@ -64,17 +64,17 @@ public interface ObjectRepository {
 	 * 
 	 * @return available object ID on the storage.
 	 */
-	public long nextAvailableID();
+	public long nextAvailableId();
 
 	/**
 	 * Build object with specified object ID.
 	 * 
-	 * @param objectID
+	 * @param objectId
 	 *            Domain Object ID to be built.
 	 * @param factory
 	 *            {@link ObjectFactory} to be delegated the job of the object
 	 *            building.
 	 * @return Object with specified ID.
 	 */
-	public Object build(long objectID, ObjectFactory factory);
+	public Object build(long objectId, ObjectFactory factory);
 }
