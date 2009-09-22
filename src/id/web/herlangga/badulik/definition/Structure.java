@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class Structure {
 	private static final int ID_FIELD_NUMBER = 0;
-	private static final DataType ID_FIELD_TYPE = DataType.LONG;
+	private static final Type ID_FIELD_TYPE = Type.LONG;
 
 	private final Vector fields;
 
@@ -20,7 +20,7 @@ public class Structure {
 		return newStructure;
 	}
 
-	public void addField(int fieldNumber, DataType fieldType) {
+	public void addField(int fieldNumber, Type fieldType) {
 		Field field = new Field(fieldNumber, fieldType);
 		fields.addElement(field);
 	}
@@ -29,11 +29,11 @@ public class Structure {
 		return ID_FIELD_NUMBER;
 	}
 
-	public final DataType getObjectIDDataType() {
+	public final Type getObjectIDDataType() {
 		return ID_FIELD_TYPE;
 	}
 
-	public final DataType getDataTypeOfFieldNumber(int number) {
+	public final Type getDataTypeOfFieldNumber(int number) {
 		Field field = (Field) fields.elementAt(number);
 		return field.getFieldType();
 	}

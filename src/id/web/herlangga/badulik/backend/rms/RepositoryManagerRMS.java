@@ -1,8 +1,7 @@
 package id.web.herlangga.badulik.backend.rms;
 
-import id.web.herlangga.badulik.ObjectRepository;
-import id.web.herlangga.badulik.RepositoryManager;
-import id.web.herlangga.badulik.definition.Structure;
+import id.web.herlangga.badulik.*;
+import id.web.herlangga.badulik.definition.*;
 
 public class RepositoryManagerRMS implements RepositoryManager {
 

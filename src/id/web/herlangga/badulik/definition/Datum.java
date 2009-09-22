@@ -1,16 +1,16 @@
 package id.web.herlangga.badulik.definition;
 
-public class DataTypeAndValuePair {
-	private final DataType dataType;
+public class Datum {
+	private final Type type;
 	private final Object value;
 	
-	public DataTypeAndValuePair(DataType dataType, Object value) {
-		this.dataType = dataType;
+	public Datum(Type type, Object value) {
+		this.type = type;
 		this.value = value;
 	}
 	
-	public final DataType getDataType() {
-		return dataType;
+	public final Type getType() {
+		return type;
 	}
 	
 	public final Object getValue() {
@@ -21,7 +21,7 @@ public class DataTypeAndValuePair {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((dataType == null) ? 0 : dataType.hashCode());
+				+ ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
@@ -33,11 +33,11 @@ public class DataTypeAndValuePair {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DataTypeAndValuePair other = (DataTypeAndValuePair) obj;
-		if (dataType == null) {
-			if (other.dataType != null)
+		Datum other = (Datum) obj;
+		if (type == null) {
+			if (other.type != null)
 				return false;
-		} else if (!dataType.equals(other.dataType))
+		} else if (!type.equals(other.type))
 			return false;
 		if (value == null) {
 			if (other.value != null)

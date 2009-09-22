@@ -1,6 +1,6 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.definition.DataTypeAndValuePair;
+import id.web.herlangga.badulik.definition.Datum;
 
 /**
  * Object repository.
@@ -14,10 +14,10 @@ public interface ObjectRepository {
 	 * 
 	 * @param objectID
 	 *            Object ID whose data is going to be fetched.
-	 * @return array of {@link DataTypeAndValuePair} contains data for specified
+	 * @return array of {@link Datum} contains data for specified
 	 *         object ID.
 	 */
-	public DataTypeAndValuePair[] find(long objectID);
+	public Datum[] find(long objectID);
 
 	/**
 	 * Store object with specified data. Based on the supplied object ID,
@@ -27,10 +27,10 @@ public interface ObjectRepository {
 	 * @param objectID
 	 *            Object ID.
 	 * @param data
-	 *            Array of {@link DataTypeAndValuePair} contains data for the
+	 *            Array of {@link Datum} contains data for the
 	 *            specified object.
 	 */
-	public void save(long objectID, DataTypeAndValuePair[] data);
+	public void save(long objectID, Datum[] data);
 
 	/**
 	 * Delete specified object based on its ID.

@@ -2,11 +2,7 @@ package id.web.herlangga.badulik.backend.rms;
 
 import java.util.Hashtable;
 
-import javax.microedition.rms.RecordStore;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotFoundException;
-import javax.microedition.rms.RecordStoreNotOpenException;
+import javax.microedition.rms.*;
 
 /**
  * Provides functionality to manage {@link RecordStore}s.
