@@ -6,8 +6,9 @@ public class StructureAndDataPair {
 
 	public static final StructureAndDataPair of(Structure structure,
 			Datum[] data) {
-		if (structure.fieldsSize() != data.length) {
-			throw new IllegalArgumentException("Structure field size and values length must be equals");
+		if (!structure.hasSameTypesWith(data)) {
+			throw new IllegalArgumentException(
+					"Structure and data types are not equals");
 		}
 		return new StructureAndDataPair(structure, data);
 	}
@@ -16,12 +17,13 @@ public class StructureAndDataPair {
 		this.structure = structure;
 		this.data = data;
 	}
-	
+
 	public Structure structure() {
 		return structure;
 	}
-	
+
 	public Datum[] data() {
 		return data;
 	}
+
 }

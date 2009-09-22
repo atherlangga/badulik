@@ -41,4 +41,16 @@ public class Structure {
 	public int fieldsSize() {
 		return fields.size();
 	}
+
+	public boolean hasSameTypesWith(Datum[] data) {
+		int fieldLength = data.length;
+		for (int fieldNumber = 0; fieldNumber < fieldLength; fieldNumber++) {
+			if (!typeOfFieldNumber(fieldNumber)
+					.equals(data[fieldNumber].type())) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
