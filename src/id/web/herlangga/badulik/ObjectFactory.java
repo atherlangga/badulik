@@ -13,7 +13,7 @@ public interface ObjectFactory {
 	 * Create object with specified data.
 	 * 
 	 * @param data
-	 *            Data for object.
+	 *            array of {@link Datum} contains object's states.
 	 * @return created object.
 	 */
 	public Object createDomainObject(Datum[] data);

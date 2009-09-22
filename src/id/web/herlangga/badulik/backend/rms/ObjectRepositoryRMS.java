@@ -142,13 +142,13 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	private RecordFilter getDomainObjectIDRecordFilterFor(
 			final long domainObjectID) {
 		final int domainObjectIDFieldNumber = objectStructure
-				.getObjectIdFieldNumber();
+				.objectIdFieldNumber();
 
 		RecordFilter domainObjectIDFilter = new RecordFilter() {
 			public boolean matches(byte[] rawData) {
 				Datum[] data = getDataTypeAndValuePairsFrom(rawData);
 
-				long id = ((Long) data[domainObjectIDFieldNumber].getValue())
+				long id = ((Long) data[domainObjectIDFieldNumber].value())
 						.longValue();
 				return (id == domainObjectID);
 			}
@@ -184,8 +184,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 		int dataFieldLength = data.length;
 		for (int i = 0; i < dataFieldLength; i++) {
-			Type type = data[i].getType();
-			Object value = data[i].getValue();
+			Type type = data[i].type();
+			Object value = data[i].value();
 
 			writeTypeAndObjectTo(wrapper, type, value);
 		}
@@ -241,8 +241,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 		int dataFieldLength = data.length;
 		for (int i = 0; i < dataFieldLength; i++) {
-			Type type = data[i].getType();
-			Object value = data[i].getValue();
+			Type type = data[i].type();
+			Object value = data[i].value();
 
 			writeTypeAndObjectTo(wrapper, type, value);
 		}
@@ -278,7 +278,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 						recordStoreName).getRecord(re.nextRecordId());
 				Datum[] data = getDataTypeAndValuePairsFrom(rawData);
 				Long id = (Long) data[objectStructure
-						.getObjectIdFieldNumber()].getValue();
+						.objectIdFieldNumber()].value();
 				long domainObjectID = id.longValue();
 				result[i] = domainObjectID;
 			}

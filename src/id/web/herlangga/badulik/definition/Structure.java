@@ -12,10 +12,10 @@ public class Structure {
 		fields = new Vector();
 	}
 
-	public static Structure createStructureWithIDAtFieldNumber(
-			int objectIDFieldNumber) {
+	public static Structure createStructureWithIdAtFieldNumber(
+			int objectIdFieldNumber) {
 		Structure newStructure = new Structure();
-		newStructure.addField(objectIDFieldNumber, ID_FIELD_TYPE);
+		newStructure.addField(objectIdFieldNumber, ID_FIELD_TYPE);
 
 		return newStructure;
 	}
@@ -25,17 +25,17 @@ public class Structure {
 		fields.addElement(field);
 	}
 
-	public int getObjectIdFieldNumber() {
+	public int objectIdFieldNumber() {
 		return ID_FIELD_NUMBER;
 	}
 
-	public final Type getObjectIdFieldType() {
+	public Type objectIdFieldType() {
 		return ID_FIELD_TYPE;
 	}
 
-	public final Type getTypeOfFieldNumber(int number) {
+	public Type typeOfFieldNumber(int number) {
 		Field field = (Field) fields.elementAt(number);
-		return field.getFieldType();
+		return field.fieldType();
 	}
 
 	public int fieldsSize() {

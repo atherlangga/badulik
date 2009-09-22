@@ -2,26 +2,26 @@ package id.web.herlangga.badulik.definition;
 
 class Field {
 	private final int fieldNumber;
-	private final Type type;
+	private final Type fieldType;
 	
 	Field(int fieldNumber, Type fieldType) {
 		this.fieldNumber = fieldNumber;
-		this.type = fieldType;
+		this.fieldType = fieldType;
 	}
 
-	final int getFieldNumber() {
+	final int fieldNumber() {
 		return fieldNumber;
 	}
 
-	final Type getFieldType() {
-		return type;
+	final Type fieldType() {
+		return fieldType;
 	}
 
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + fieldNumber;
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((fieldType == null) ? 0 : fieldType.hashCode());
 		return result;
 	}
 
@@ -35,10 +35,10 @@ class Field {
 		Field other = (Field) obj;
 		if (fieldNumber != other.fieldNumber)
 			return false;
-		if (type == null) {
-			if (other.type != null)
+		if (fieldType == null) {
+			if (other.fieldType != null)
 				return false;
-		} else if (!type.equals(other.type))
+		} else if (!fieldType.equals(other.fieldType))
 			return false;
 		return true;
 	}

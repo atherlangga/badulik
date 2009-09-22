@@ -9,11 +9,11 @@ public class Datum {
 		this.value = value;
 	}
 	
-	public final Type getType() {
+	public final Type type() {
 		return type;
 	}
 	
-	public final Object getValue() {
+	public final Object value() {
 		return value;
 	}
 

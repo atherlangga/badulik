@@ -23,7 +23,7 @@ public interface RepositoryManager {
 	 *         specified, or new {@link ObjectRepository} based on name and
 	 *         {@link Structure} supplied.
 	 */
-	public ObjectRepository getRepository(String name, Structure objectStructure);
+	public ObjectRepository get(String name, Structure objectStructure);
 
 	/**
 	 * Remove {@link ObjectRepository} on all of kept Domain Object.
@@ -31,5 +31,5 @@ public interface RepositoryManager {
 	 * @param name
 	 *            Unique identifier of the {@link ObjectRepository}.
 	 */
-	public void dropRepository(String name);
+	public void drop(String name);
 }

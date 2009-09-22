@@ -5,11 +5,11 @@ import id.web.herlangga.badulik.definition.*;
 
 public class RepositoryManagerRMS implements RepositoryManager {
 
-	public ObjectRepository getRepository(String name, Structure objectStructure) {
+	public ObjectRepository get(String name, Structure objectStructure) {
 		return new ObjectRepositoryRMS(name, objectStructure);
 	}
 
-	public void dropRepository(String name) {
+	public void drop(String name) {
 		RecordStoresGateway.deleteRecordStore(name);
 	}
 
