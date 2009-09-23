@@ -55,21 +55,21 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 		return result;
 	}
-	
+
 	private Datum readDatumFrom(DataInputStream wrapper) {
 		try {
 			Type datumType = Type.of(wrapper.readInt());
 			Object datumValue = new Object();
-			
-			if (datumType == Type.INT) {
+
+			if (datumType == (Type.INT)) {
 				datumValue = new Integer(wrapper.readInt());
-			} else if (datumType == Type.LONG) {
+			} else if (datumType == (Type.LONG)) {
 				datumValue = new Long(wrapper.readLong());
-			} else if (datumType == Type.STRING) {
+			} else if (datumType == (Type.STRING)) {
 				datumValue = wrapper.readUTF();
-			} else if (datumType == Type.DATE) {
+			} else if (datumType == (Type.DATE)) {
 				datumValue = new Date(wrapper.readLong());
-			} else if (datumType == Type.BOOL) {
+			} else if (datumType == (Type.BOOL)) {
 				datumValue = new Boolean(wrapper.readBoolean());
 			} else {
 				throw new IllegalArgumentException(
@@ -145,9 +145,9 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			public boolean matches(byte[] rawData) {
 				Datum[] data = generateDataFrom(rawData);
 
-				long id = ((Long) data[objectIdFieldNumber].value())
-						.longValue();
-				return (id == objectId);
+				Long id = (Long) data[objectIdFieldNumber].value();
+				long idLongValue = id.longValue();
+				return (idLongValue == objectId);
 			}
 		};
 
