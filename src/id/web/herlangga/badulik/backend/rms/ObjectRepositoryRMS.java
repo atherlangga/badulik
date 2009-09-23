@@ -23,6 +23,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 				int recordId = translateToRecordIdFrom(objectId);
 				byte[] rawData = RecordStoresGateway.recordStoreFor(
 						recordStoreName).getRecord(recordId);
+				
 				return generateDataFrom(rawData);
 			} catch (RecordStoreNotOpenException e) {
 				e.printStackTrace();
@@ -58,25 +59,10 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 	private Datum readDatumFrom(DataInputStream wrapper) {
 		try {
-			Type datumType = Type.of(wrapper.readInt());
-			Object datumValue = new Object();
+			Type type = Type.of(wrapper.readInt());
+			Object value = TypeReader.of(type).readFrom(wrapper);
 
-			if (datumType == (Type.INT)) {
-				datumValue = new Integer(wrapper.readInt());
-			} else if (datumType == (Type.LONG)) {
-				datumValue = new Long(wrapper.readLong());
-			} else if (datumType == (Type.STRING)) {
-				datumValue = wrapper.readUTF();
-			} else if (datumType == (Type.DATE)) {
-				datumValue = new Date(wrapper.readLong());
-			} else if (datumType == (Type.BOOL)) {
-				datumValue = new Boolean(wrapper.readBoolean());
-			} else {
-				throw new IllegalArgumentException(
-						"Object structure is not valid.");
-			}
-
-			return new Datum(datumType, datumValue);
+			return new Datum(type, value);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -147,6 +133,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 				Long id = (Long) data[objectIdFieldNumber].value();
 				long idLongValue = id.longValue();
+				
 				return (idLongValue == objectId);
 			}
 		};
@@ -158,11 +145,12 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		RecordFilter objectIdFilter = createRecordFilterFor(objectId);
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
-					recordStoreName).enumerateRecords(objectIdFilter,
-					null, false);
+					recordStoreName).enumerateRecords(objectIdFilter, null,
+					false);
 			if (re.hasNextElement()) {
 				int result = re.nextRecordId();
 				re.destroy();
+				
 				return result;
 			}
 		} catch (RecordStoreNotOpenException e) {
@@ -278,7 +266,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			e.printStackTrace();
 		}
 
-		throw new RuntimeException();
+		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
 	public Object build(long objectId, ObjectReconstitutor factory) {

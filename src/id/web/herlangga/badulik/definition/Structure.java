@@ -3,14 +3,14 @@ package id.web.herlangga.badulik.definition;
 import java.util.Vector;
 
 public class Structure {
-	private final Vector fields;
 	private final int objectIdFieldNumber;
 	private final Type objectIdFieldType;
+	
+	private final Vector fields = new Vector();
 
 	private Structure(int objectIdFieldNumber, Type objectIdFieldType) {
 		this.objectIdFieldNumber = objectIdFieldNumber;
 		this.objectIdFieldType = objectIdFieldType;
-		fields = new Vector();
 	}
 
 	public static Structure createStructureWithIdField(int objectIdFieldNumber,
