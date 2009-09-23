@@ -281,9 +281,9 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException();
 	}
 
-	public Object build(long objectId, ObjectFactory factory) {
+	public Object build(long objectId, ObjectReconstitutor factory) {
 		Datum[] data = find(objectId);
-		Object built = factory.createObject(data);
+		Object built = factory.reconstituteObjectFrom(data);
 
 		return built;
 	}

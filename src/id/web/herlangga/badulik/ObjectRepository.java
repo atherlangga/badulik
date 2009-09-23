@@ -70,9 +70,9 @@ public interface ObjectRepository {
 	 * @param objectId
 	 *            Object Id to be built.
 	 * @param factory
-	 *            {@link ObjectFactory} to be delegated the job of the object
+	 *            {@link ObjectReconstitutor} to be delegated the job of the object
 	 *            building.
 	 * @return Object with specified Id.
 	 */
-	public Object build(long objectId, ObjectFactory factory);
+	public Object build(long objectId, ObjectReconstitutor factory);
 }
