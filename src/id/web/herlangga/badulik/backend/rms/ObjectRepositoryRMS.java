@@ -141,7 +141,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	private RecordFilter createRecordFilterFor(final long objectId) {
 		final int objectIdFieldNumber = objectStructure.objectIdFieldNumber();
 
-		RecordFilter domainObjectIdFilter = new RecordFilter() {
+		RecordFilter objectIdFilter = new RecordFilter() {
 			public boolean matches(byte[] rawData) {
 				Datum[] data = generateDataFrom(rawData);
 
@@ -151,14 +151,14 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			}
 		};
 
-		return domainObjectIdFilter;
+		return objectIdFilter;
 	}
 
 	private int translateToRecordIdFrom(long objectId) {
-		RecordFilter domainObjectIDFilter = createRecordFilterFor(objectId);
+		RecordFilter objectIdFilter = createRecordFilterFor(objectId);
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
-					recordStoreName).enumerateRecords(domainObjectIDFilter,
+					recordStoreName).enumerateRecords(objectIdFilter,
 					null, false);
 			if (re.hasNextElement()) {
 				int result = re.nextRecordId();

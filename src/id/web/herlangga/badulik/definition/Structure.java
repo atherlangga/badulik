@@ -3,19 +3,21 @@ package id.web.herlangga.badulik.definition;
 import java.util.Vector;
 
 public class Structure {
-	private static final int ID_FIELD_NUMBER = 0;
-	private static final Type ID_FIELD_TYPE = Type.LONG;
-
 	private final Vector fields;
+	private final int objectIdFieldNumber;
+	private final Type objectIdFieldType;
 
-	private Structure() {
+	private Structure(int objectIdFieldNumber, Type objectIdFieldType) {
+		this.objectIdFieldNumber = objectIdFieldNumber;
+		this.objectIdFieldType = objectIdFieldType;
 		fields = new Vector();
 	}
 
-	public static Structure createStructureWithIdAtFieldNumber(
-			int objectIdFieldNumber) {
-		Structure newStructure = new Structure();
-		newStructure.addField(objectIdFieldNumber, ID_FIELD_TYPE);
+	public static Structure createStructureWithIdField(int objectIdFieldNumber,
+			Type objectIdFieldType) {
+		Structure newStructure = new Structure(objectIdFieldNumber,
+				objectIdFieldType);
+		newStructure.addField(objectIdFieldNumber, objectIdFieldType);
 
 		return newStructure;
 	}
@@ -26,11 +28,11 @@ public class Structure {
 	}
 
 	public int objectIdFieldNumber() {
-		return ID_FIELD_NUMBER;
+		return objectIdFieldNumber;
 	}
 
 	public Type objectIdFieldType() {
-		return ID_FIELD_TYPE;
+		return objectIdFieldType;
 	}
 
 	public Type typeOfFieldNumber(int number) {

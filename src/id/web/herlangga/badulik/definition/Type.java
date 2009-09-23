@@ -3,7 +3,7 @@ package id.web.herlangga.badulik.definition;
 import java.util.*;
 
 /**
- * Define supported types.
+ * Define supported types for persisting object's states.
  * 
  * @author angga
  * 
