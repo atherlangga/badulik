@@ -4,7 +4,6 @@ import id.web.herlangga.badulik.*;
 import id.web.herlangga.badulik.definition.*;
 
 import java.io.*;
-import java.util.Date;
 
 import javax.microedition.rms.*;
 
@@ -17,73 +16,48 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		this.objectStructure = objectStructure;
 	}
 
-	public Datum[] find(long objectId) {
-		if (isExist(objectId)) {
-			try {
-				int recordId = translateToRecordIdFrom(objectId);
-				byte[] rawData = RecordStoresGateway.recordStoreFor(
-						recordStoreName).getRecord(recordId);
-				
-				return generateDataFrom(rawData);
-			} catch (RecordStoreNotOpenException e) {
-				e.printStackTrace();
-			} catch (InvalidRecordIDException e) {
-				e.printStackTrace();
-			} catch (RecordStoreException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return new Datum[0];
-	}
-
-	private Datum[] generateDataFrom(byte[] rawData) {
-		int fieldSize = objectStructure.fieldsSize();
-		Datum[] result = new Datum[fieldSize];
-
+	public Object find(Datum objectId, ObjectReconstitutor reconstitutor) {
 		try {
-			ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
-			DataInputStream wrapper = new DataInputStream(reader);
-			for (int i = 0; i < fieldSize; i++) {
-				result[i] = readDatumFrom(wrapper);
-			}
-
-			reader.close();
-			wrapper.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return result;
-	}
-
-	private Datum readDatumFrom(DataInputStream wrapper) {
-		try {
-			Type type = Type.of(wrapper.readInt());
-			Object value = TypeReader.of(type).readFrom(wrapper);
-
-			return new Datum(type, value);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		throw new RuntimeException("This line shouldn't be reached.");
-	}
-
-	public long nextAvailableId() {
-		try {
-			return RecordStoresGateway.recordStoreFor(recordStoreName)
-					.getNextRecordID();
+			Datum[] data = getPersistedStates(objectId);
+			return reconstitutor.reconstituteObjectFrom(data);
 		} catch (RecordStoreNotOpenException e) {
+			e.printStackTrace();
+		} catch (InvalidRecordIDException e) {
+			e.printStackTrace();
+		} catch (RecordStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return new Object();
+	}
+
+	public void save(Object object, ObjectStateExtractor extractor) {
+		Datum[] data = extractor.extractStateFrom(object);
+		Datum objectId = data[objectStructure.objectIdFieldNumber()];
+
+		try {
+			byte[] rawData = generateRawDataFrom(data);
+			if (isExist(objectId)) {
+				editExisting(objectId, rawData);
+			} else {
+				insertNew(rawData);
+			}
+		} catch (RecordStoreNotOpenException e) {
+			e.printStackTrace();
+		} catch (InvalidRecordIDException e) {
+			e.printStackTrace();
+		} catch (RecordStoreFullException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {
 			e.printStackTrace();
 		}
-
-		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
-	public void remove(long objectId) {
+	public void remove(Datum objectId) {
 		try {
 			int recordId = translateToRecordIdFrom(objectId);
 			RecordStoresGateway.recordStoreFor(recordStoreName).deleteRecord(
@@ -97,17 +71,10 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		}
 	}
 
-	public void save(long objectId, Datum[] data) {
-		if (isExist(objectId)) {
-			editExistingRecord(objectId, data);
-		} else {
-			insertNewRecord(data);
-		}
-	}
-
-	public boolean isExist(long objectId) {
-		RecordFilter objectIdFilter = createRecordFilterFor(objectId);
+	public boolean isExist(Datum objectId) {
+		RecordFilter objectIdFilter = new ObjectIdFilter(objectId);
 		boolean result = false;
+
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					recordStoreName).enumerateRecords(objectIdFilter, null,
@@ -115,7 +82,6 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			if (re.hasNextElement()) {
 				result = true;
 			}
-
 			re.destroy();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -124,156 +90,130 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		return result;
 	}
 
-	private RecordFilter createRecordFilterFor(final long objectId) {
-		final int objectIdFieldNumber = objectStructure.objectIdFieldNumber();
-
-		RecordFilter objectIdFilter = new RecordFilter() {
-			public boolean matches(byte[] rawData) {
-				Datum[] data = generateDataFrom(rawData);
-
-				Long id = (Long) data[objectIdFieldNumber].value();
-				long idLongValue = id.longValue();
-				
-				return (idLongValue == objectId);
-			}
-		};
-
-		return objectIdFilter;
-	}
-
-	private int translateToRecordIdFrom(long objectId) {
-		RecordFilter objectIdFilter = createRecordFilterFor(objectId);
-		try {
-			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
-					recordStoreName).enumerateRecords(objectIdFilter, null,
-					false);
-			if (re.hasNextElement()) {
-				int result = re.nextRecordId();
-				re.destroy();
-				
-				return result;
-			}
-		} catch (RecordStoreNotOpenException e) {
-			e.printStackTrace();
-		} catch (InvalidRecordIDException e) {
-			e.printStackTrace();
-		}
-
-		throw new IllegalArgumentException("Invalid object ID specified.");
-	}
-
-	private void insertNewRecord(Datum[] data) {
-		byte[] rawData = generateRawDataFrom(data);
-		try {
-			RecordStoresGateway.recordStoreFor(recordStoreName).addRecord(
-					rawData, 0, rawData.length);
-		} catch (RecordStoreNotOpenException e) {
-			e.printStackTrace();
-		} catch (RecordStoreFullException e) {
-			e.printStackTrace();
-		} catch (RecordStoreException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private byte[] generateRawDataFrom(Datum[] data) {
-		ByteArrayOutputStream writer = new ByteArrayOutputStream();
-		DataOutputStream wrapper = new DataOutputStream(writer);
-
-		int dataFieldLength = data.length;
-		for (int i = 0; i < dataFieldLength; i++) {
-			writeDatumTo(wrapper, data[i]);
-		}
-
-		byte[] result = writer.toByteArray();
-		try {
-			writer.close();
-			wrapper.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return result;
-	}
-
-	private void writeDatumTo(DataOutputStream wrapper, Datum datum) {
-		try {
-			Type type = datum.type();
-			wrapper.writeInt(type.typeAsInteger());
-
-			if (type == Type.INT) {
-				Integer toBeWritten = (Integer) datum.value();
-				wrapper.writeInt(toBeWritten.intValue());
-			} else if (type == Type.LONG) {
-				Long toBeWritten = (Long) datum.value();
-				wrapper.writeLong(toBeWritten.longValue());
-			} else if (type == Type.STRING) {
-				String toBeWritten = (String) datum.value();
-				wrapper.writeUTF(toBeWritten);
-			} else if (type == Type.DATE) {
-				Date toBeWritten = (Date) datum.value();
-				wrapper.writeLong(toBeWritten.getTime());
-			} else if (type == Type.BOOL) {
-				Boolean toBeWritten = (Boolean) datum.value();
-				wrapper.writeBoolean(toBeWritten.booleanValue());
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void editExistingRecord(long objectId, Datum[] data) {
-		byte[] rawData = generateRawDataFrom(data);
-		try {
-			int recordId = translateToRecordIdFrom(objectId);
-			RecordStoresGateway.recordStoreFor(recordStoreName).setRecord(
-					recordId, rawData, 0, rawData.length);
-		} catch (RecordStoreNotOpenException e) {
-			e.printStackTrace();
-		} catch (RecordStoreFullException e) {
-			e.printStackTrace();
-		} catch (RecordStoreException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	public long[] fetchAllIds() {
+	public Datum[] fetchAllIds() {
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					recordStoreName).enumerateRecords(null, null, false);
 			int total = re.numRecords();
-			long[] result = new long[total];
+			Datum[] ids = new Datum[total];
 
 			for (int i = 0; i < total; i++) {
 				byte[] rawData = RecordStoresGateway.recordStoreFor(
 						recordStoreName).getRecord(re.nextRecordId());
 				Datum[] data = generateDataFrom(rawData);
-				Long id = (Long) data[objectStructure.objectIdFieldNumber()]
-						.value();
-				long objectId = id.longValue();
-				result[i] = objectId;
+				ids[i] = data[objectStructure.objectIdFieldNumber()];
 			}
 			re.destroy();
 
-			return result;
+			return ids;
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (InvalidRecordIDException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
-	public Object build(long objectId, ObjectReconstitutor factory) {
-		Datum[] data = find(objectId);
-		Object built = factory.reconstituteObjectFrom(data);
+	private Datum[] getPersistedStates(Datum objectId)
+			throws RecordStoreNotOpenException, InvalidRecordIDException,
+			RecordStoreException, IOException {
+		if (isExist(objectId)) {
+			int recordId = translateToRecordIdFrom(objectId);
+			byte[] rawData = RecordStoresGateway
+					.recordStoreFor(recordStoreName).getRecord(recordId);
 
-		return built;
+			return generateDataFrom(rawData);
+		}
+
+		return new Datum[0];
+	}
+
+	private Datum[] generateDataFrom(byte[] rawData) throws IOException {
+		int fieldSize = objectStructure.fieldsSize();
+		Datum[] result = new Datum[fieldSize];
+
+		ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
+		DataInputStream wrapper = new DataInputStream(reader);
+		for (int i = 0; i < fieldSize; i++) {
+			result[i] = DatumReader.of(wrapper).readFrom(wrapper);
+		}
+		reader.close();
+		wrapper.close();
+
+		return result;
+	}
+
+	private int translateToRecordIdFrom(Datum objectId)
+			throws RecordStoreNotOpenException, InvalidRecordIDException {
+		RecordFilter objectIdFilter = new ObjectIdFilter(objectId);
+		RecordEnumeration re = RecordStoresGateway.recordStoreFor(
+				recordStoreName).enumerateRecords(objectIdFilter, null, false);
+		
+		if (re.hasNextElement()) {
+			int result = re.nextRecordId();
+			re.destroy();
+
+			return result;
+		}
+
+		throw new IllegalArgumentException("Invalid object Id specified.");
+	}
+
+	private void insertNew(byte[] rawData) throws IOException,
+			RecordStoreNotOpenException, RecordStoreFullException,
+			RecordStoreException {
+		RecordStoresGateway.recordStoreFor(recordStoreName).addRecord(rawData,
+				0, rawData.length);
+	}
+
+	private void editExisting(Datum objectId, byte[] rawData)
+			throws IOException, RecordStoreNotOpenException,
+			InvalidRecordIDException, RecordStoreFullException,
+			RecordStoreException {
+		int recordId = translateToRecordIdFrom(objectId);
+		RecordStoresGateway.recordStoreFor(recordStoreName).setRecord(recordId,
+				rawData, 0, rawData.length);
+	}
+	
+	private byte[] generateRawDataFrom(Datum[] data) throws IOException {
+		ByteArrayOutputStream writer = new ByteArrayOutputStream();
+		DataOutputStream wrapper = new DataOutputStream(writer);
+
+		int dataFieldLength = data.length;
+		for (int i = 0; i < dataFieldLength; i++) {
+			DatumWriter.forDatum(data[i]).writeTo(wrapper, data[i]);
+		}
+
+		byte[] rawData = writer.toByteArray();
+		writer.close();
+		wrapper.close();
+
+		return rawData;
+	}
+
+	private class ObjectIdFilter implements RecordFilter {
+		private final Datum objectId;
+
+		public ObjectIdFilter(Datum objectId) {
+			this.objectId = objectId;
+		}
+
+		public boolean matches(byte[] rawData) {
+			try {
+				Datum[] data = generateDataFrom(rawData);
+				return objectId.equals(data[objectStructure
+						.objectIdFieldNumber()]);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return false;
+		}
 	}
 
 }

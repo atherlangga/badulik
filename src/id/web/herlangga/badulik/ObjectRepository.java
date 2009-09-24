@@ -9,26 +9,29 @@ import id.web.herlangga.badulik.definition.Datum;
  * 
  */
 public interface ObjectRepository {
-	/**
-	 * Fetch data based on specified object Id.
-	 * 
-	 * @param objectId
-	 *            Object Id whose data is going to be fetched.
-	 * @return array of {@link Datum} contains data for specified object Id.
-	 */
-	public Datum[] find(long objectId);
 
 	/**
-	 * Store object with specified data. Based on the supplied object Id,
-	 * {@link ObjectRepository} will make decision whether to insert new record
-	 * or edit existing record.
+	 * Find object with specified Id.
 	 * 
 	 * @param objectId
-	 *            Object Id.
-	 * @param data
-	 *            Array of {@link Datum} contains object's state to save.
+	 *            {@link Datum} object Id.
+	 * @param reconstitutor
+	 *            {@link ObjectReconstitutor} to be delegated the job of the
+	 *            object building.
+	 * @return Object with specified Id.
 	 */
-	public void save(long objectId, Datum[] data);
+	public Object find(Datum objectId, ObjectReconstitutor reconstitutor);
+
+	/**
+	 * Store object. Based on the object Id, {@link ObjectRepository} will make
+	 * decision whether to insert new record or edit existing record.
+	 * 
+	 * @param object
+	 *            {@link Object} to store.
+	 * @param extractor
+	 *            {@link ObjectStateExtractor} to extract object's state.
+	 */
+	public void save(Object object, ObjectStateExtractor extractor);
 
 	/**
 	 * Delete specified object based on its Id.
@@ -36,7 +39,7 @@ public interface ObjectRepository {
 	 * @param objectId
 	 *            Object Id to delete from storage.
 	 */
-	public void remove(long objectId);
+	public void remove(Datum objectId);
 
 	/**
 	 * Check for object existance based on its Id.
@@ -46,33 +49,13 @@ public interface ObjectRepository {
 	 * @return <code>true</code> if specified object ID exist, else
 	 *         <code>false</code>.
 	 */
-	public boolean isExist(long objectId);
+	public boolean isExist(Datum objectId);
 
 	/**
 	 * Find and return all object Ids exist in the storage.
 	 * 
 	 * @return array of long contains object IDs.
 	 */
-	public long[] fetchAllIds();
+	public Datum[] fetchAllIds();
 
-	/**
-	 * Get new and valid object Id. When the object Id is retrieved, it is
-	 * recommended to immediately save the object to avoid collision with the
-	 * next caller of this function.
-	 * 
-	 * @return available object Id on the storage.
-	 */
-	public long nextAvailableId();
-
-	/**
-	 * Build object with specified object Id.
-	 * 
-	 * @param objectId
-	 *            Object Id to be built.
-	 * @param factory
-	 *            {@link ObjectReconstitutor} to be delegated the job of the object
-	 *            building.
-	 * @return Object with specified Id.
-	 */
-	public Object build(long objectId, ObjectReconstitutor factory);
 }
