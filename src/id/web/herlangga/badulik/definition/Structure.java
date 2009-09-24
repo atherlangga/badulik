@@ -60,12 +60,12 @@ public class Structure {
 			return this;
 		}
 
-		public StructureBuilder thenAddField(int fieldNumber, Type fieldType) {
+		public StructureBuilder andField(int fieldNumber, Type fieldType) {
 			structure.addField(fieldNumber, fieldType);
 			return this;
 		}
 
-		public Structure finallyGetResult() {
+		public Structure thenGetResult() {
 			return structure;
 		}
 	}

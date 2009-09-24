@@ -12,9 +12,9 @@ public interface ObjectReconstitutor {
 	/**
 	 * Reconstitute object with specified data.
 	 * 
-	 * @param data
+	 * @param states
 	 *            Array of {@link Datum} contains object's states.
 	 * @return Reconstituted object.
 	 */
-	public Object reconstituteObjectFrom(Datum[] data);
+	public Object reconstituteObjectFrom(Datum[] states);
 }
