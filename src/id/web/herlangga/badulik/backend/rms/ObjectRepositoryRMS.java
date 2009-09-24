@@ -17,25 +17,26 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	}
 
 	public Object find(Datum objectId, ObjectReconstitutor reconstitutor) {
-		try {
-			Datum[] data = getPersistedStates(objectId);
-			return reconstitutor.reconstituteObjectFrom(data);
-		} catch (RecordStoreNotOpenException e) {
-			e.printStackTrace();
-		} catch (InvalidRecordIDException e) {
-			e.printStackTrace();
-		} catch (RecordStoreException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (isExist(objectId)) {
+			try {
+				Datum[] data = getPersistedStates(objectId);
+				return reconstitutor.reconstituteObjectFrom(data);
+			} catch (RecordStoreNotOpenException e) {
+				e.printStackTrace();
+			} catch (InvalidRecordIDException e) {
+				e.printStackTrace();
+			} catch (RecordStoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-
-		return new Object();
+		throw new IllegalArgumentException("Object Id is not exist");
 	}
 
 	public void save(Object object, ObjectStateExtractor extractor) {
 		Datum[] data = extractor.extractStateFrom(object);
-		Datum objectId = data[objectStructure.objectIdFieldNumber()];
+		Datum objectId = data[objectStructure.idFieldNumber()];
 
 		try {
 			byte[] rawData = generateRawDataFrom(data);
@@ -101,7 +102,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 				byte[] rawData = RecordStoresGateway.recordStoreFor(
 						recordStoreName).getRecord(re.nextRecordId());
 				Datum[] data = generateDataFrom(rawData);
-				ids[i] = data[objectStructure.objectIdFieldNumber()];
+				ids[i] = data[objectStructure.idFieldNumber()];
 			}
 			re.destroy();
 
@@ -122,15 +123,11 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	private Datum[] getPersistedStates(Datum objectId)
 			throws RecordStoreNotOpenException, InvalidRecordIDException,
 			RecordStoreException, IOException {
-		if (isExist(objectId)) {
-			int recordId = translateToRecordIdFrom(objectId);
-			byte[] rawData = RecordStoresGateway
-					.recordStoreFor(recordStoreName).getRecord(recordId);
+		int recordId = translateToRecordIdFrom(objectId);
+		byte[] rawData = RecordStoresGateway.recordStoreFor(recordStoreName)
+				.getRecord(recordId);
 
-			return generateDataFrom(rawData);
-		}
-
-		return new Datum[0];
+		return generateDataFrom(rawData);
 	}
 
 	private Datum[] generateDataFrom(byte[] rawData) throws IOException {
@@ -153,7 +150,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		RecordFilter objectIdFilter = new ObjectIdFilter(objectId);
 		RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 				recordStoreName).enumerateRecords(objectIdFilter, null, false);
-		
+
 		if (re.hasNextElement()) {
 			int result = re.nextRecordId();
 			re.destroy();
@@ -179,7 +176,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		RecordStoresGateway.recordStoreFor(recordStoreName).setRecord(recordId,
 				rawData, 0, rawData.length);
 	}
-	
+
 	private byte[] generateRawDataFrom(Datum[] data) throws IOException {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
@@ -206,8 +203,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		public boolean matches(byte[] rawData) {
 			try {
 				Datum[] data = generateDataFrom(rawData);
-				return objectId.equals(data[objectStructure
-						.objectIdFieldNumber()]);
+				return objectId.equals(data[objectStructure.idFieldNumber()]);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

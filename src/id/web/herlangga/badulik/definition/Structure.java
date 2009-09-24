@@ -3,14 +3,14 @@ package id.web.herlangga.badulik.definition;
 import java.util.Vector;
 
 public class Structure {
-	private final int objectIdFieldNumber;
-	private final Type objectIdFieldType;
+	private final int idFieldNumber;
+	private final Type idFieldType;
 
 	private final Vector fields = new Vector();
 
-	private Structure(int objectIdFieldNumber, Type objectIdFieldType) {
-		this.objectIdFieldNumber = objectIdFieldNumber;
-		this.objectIdFieldType = objectIdFieldType;
+	private Structure(int idFieldNumber, Type idFieldType) {
+		this.idFieldNumber = idFieldNumber;
+		this.idFieldType = idFieldType;
 	}
 
 	public static StructureBuilder buildNew() {
@@ -22,12 +22,12 @@ public class Structure {
 		fields.addElement(field);
 	}
 
-	public int objectIdFieldNumber() {
-		return objectIdFieldNumber;
+	public int idFieldNumber() {
+		return idFieldNumber;
 	}
 
-	public Type objectIdFieldType() {
-		return objectIdFieldType;
+	public Type idFieldType() {
+		return idFieldType;
 	}
 
 	public Type typeOfFieldNumber(int number) {
@@ -56,6 +56,7 @@ public class Structure {
 
 		public StructureBuilder withIdField(int idFieldNumber, Type idFieldType) {
 			structure = new Structure(idFieldNumber, idFieldType);
+			structure.addField(idFieldNumber, idFieldType);
 			return this;
 		}
 
@@ -64,7 +65,7 @@ public class Structure {
 			return this;
 		}
 
-		public Structure thenDoBuild() {
+		public Structure finallyGetResult() {
 			return structure;
 		}
 	}
