@@ -19,8 +19,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	public Object find(Datum objectId, ObjectReconstitutor reconstitutor) {
 		if (isExist(objectId)) {
 			try {
-				Datum[] data = getPersistedStates(objectId);
-				return reconstitutor.reconstituteObjectFrom(data);
+				Datum[] states = getPersistedStates(objectId);
+				return reconstitutor.reconstituteObjectFrom(states);
 			} catch (RecordStoreNotOpenException e) {
 				e.printStackTrace();
 			} catch (InvalidRecordIDException e) {
@@ -35,11 +35,11 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	}
 
 	public void save(Object object, ObjectStateExtractor extractor) {
-		Datum[] data = extractor.extractStateFrom(object);
-		Datum objectId = data[objectStructure.idFieldNumber()];
+		Datum[] states = extractor.extractStateFrom(object);
+		Datum objectId = states[objectStructure.idFieldNumber()];
 
 		try {
-			byte[] rawData = generateRawDataFrom(data);
+			byte[] rawData = generateRawDataFrom(states);
 			if (isExist(objectId)) {
 				editExisting(objectId, rawData);
 			} else {
@@ -101,8 +101,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			for (int i = 0; i < total; i++) {
 				byte[] rawData = RecordStoresGateway.recordStoreFor(
 						recordStoreName).getRecord(re.nextRecordId());
-				Datum[] data = generateDataFrom(rawData);
-				ids[i] = data[objectStructure.idFieldNumber()];
+				Datum[] states = generateStatesFrom(rawData);
+				ids[i] = states[objectStructure.idFieldNumber()];
 			}
 			re.destroy();
 
@@ -127,22 +127,22 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		byte[] rawData = RecordStoresGateway.recordStoreFor(recordStoreName)
 				.getRecord(recordId);
 
-		return generateDataFrom(rawData);
+		return generateStatesFrom(rawData);
 	}
 
-	private Datum[] generateDataFrom(byte[] rawData) throws IOException {
+	private Datum[] generateStatesFrom(byte[] rawData) throws IOException {
 		int fieldSize = objectStructure.fieldsSize();
-		Datum[] result = new Datum[fieldSize];
+		Datum[] states = new Datum[fieldSize];
 
 		ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
 		DataInputStream wrapper = new DataInputStream(reader);
 		for (int i = 0; i < fieldSize; i++) {
-			result[i] = DatumReader.of(wrapper).readFrom(wrapper);
+			states[i] = DatumReader.of(wrapper).readFrom(wrapper);
 		}
 		reader.close();
 		wrapper.close();
 
-		return result;
+		return states;
 	}
 
 	private int translateToRecordIdFrom(Datum objectId)
@@ -177,13 +177,13 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 				rawData, 0, rawData.length);
 	}
 
-	private byte[] generateRawDataFrom(Datum[] data) throws IOException {
+	private byte[] generateRawDataFrom(Datum[] states) throws IOException {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
 
-		int dataFieldLength = data.length;
+		int dataFieldLength = states.length;
 		for (int i = 0; i < dataFieldLength; i++) {
-			DatumWriter.forDatum(data[i]).writeTo(wrapper, data[i]);
+			DatumWriter.forDatum(states[i]).writeTo(wrapper, states[i]);
 		}
 
 		byte[] rawData = writer.toByteArray();
@@ -202,8 +202,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 		public boolean matches(byte[] rawData) {
 			try {
-				Datum[] data = generateDataFrom(rawData);
-				return objectId.equals(data[objectStructure.idFieldNumber()]);
+				Datum[] states = generateStatesFrom(rawData);
+				return objectId.equals(states[objectStructure.idFieldNumber()]);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

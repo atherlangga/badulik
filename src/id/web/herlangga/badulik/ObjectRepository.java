@@ -17,14 +17,14 @@ public interface ObjectRepository {
 	 *            {@link Datum} object Id.
 	 * @param reconstitutor
 	 *            {@link ObjectReconstitutor} to be delegated the job of the
-	 *            object building.
+	 *            object reconstitution.
 	 * @return Object with specified Id.
 	 */
 	public Object find(Datum objectId, ObjectReconstitutor reconstitutor);
 
 	/**
-	 * Store object. Based on the object Id, {@link ObjectRepository} will make
-	 * decision whether to insert new record or edit existing record.
+	 * Store object. Based on the extracted object Id, {@link ObjectRepository}
+	 * will make decision whether to insert new record or edit existing record.
 	 * 
 	 * @param object
 	 *            {@link Object} to store.
