@@ -34,8 +34,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new IllegalArgumentException("Object Id is not exist");
 	}
 
-	public void save(Object object, ObjectStateExtractor extractor) {
-		Datum[] states = extractor.extractStateFrom(object);
+	public void save(Object object, ObjectStatesExtractor extractor) {
+		Datum[] states = extractor.extractStatesFrom(object);
 		Datum objectId = states[objectStructure.idFieldNumber()];
 
 		try {

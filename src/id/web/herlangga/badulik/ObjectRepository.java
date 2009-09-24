@@ -29,9 +29,9 @@ public interface ObjectRepository {
 	 * @param object
 	 *            {@link Object} to store.
 	 * @param extractor
-	 *            {@link ObjectStateExtractor} to extract object's state.
+	 *            {@link ObjectStatesExtractor} to extract object's state.
 	 */
-	public void save(Object object, ObjectStateExtractor extractor);
+	public void save(Object object, ObjectStatesExtractor extractor);
 
 	/**
 	 * Delete specified object based on its Id.

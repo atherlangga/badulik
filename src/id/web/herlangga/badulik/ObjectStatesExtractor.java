@@ -8,14 +8,14 @@ import id.web.herlangga.badulik.definition.*;
  * @author angga
  * 
  */
-public interface ObjectStateExtractor {
+public interface ObjectStatesExtractor {
 
 	/**
 	 * Extract Object's state so it can persisted and reconstituted back.
 	 * 
 	 * @param toExtract
-	 *            {@link Object} which state is about to extracted.
+	 *            {@link Object} which state is about to be extracted.
 	 * @return extracted data which is represented by array of {@link Datum}.
 	 */
-	public Datum[] extractStateFrom(Object toExtract);
+	public Datum[] extractStatesFrom(Object toExtract);
 }
