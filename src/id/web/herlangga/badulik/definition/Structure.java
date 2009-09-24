@@ -5,7 +5,7 @@ import java.util.Vector;
 public class Structure {
 	private final int objectIdFieldNumber;
 	private final Type objectIdFieldType;
-	
+
 	private final Vector fields = new Vector();
 
 	private Structure(int objectIdFieldNumber, Type objectIdFieldType) {
@@ -13,13 +13,8 @@ public class Structure {
 		this.objectIdFieldType = objectIdFieldType;
 	}
 
-	public static Structure createStructureWithIdField(int objectIdFieldNumber,
-			Type objectIdFieldType) {
-		Structure newStructure = new Structure(objectIdFieldNumber,
-				objectIdFieldType);
-		newStructure.addField(objectIdFieldNumber, objectIdFieldType);
-
-		return newStructure;
+	public static StructureBuilder buildNew() {
+		return new StructureBuilder();
 	}
 
 	public void addField(int fieldNumber, Type fieldType) {
@@ -55,4 +50,23 @@ public class Structure {
 
 		return true;
 	}
+
+	public static class StructureBuilder {
+		private Structure structure;
+
+		public StructureBuilder withIdField(int idFieldNumber, Type idFieldType) {
+			structure = new Structure(idFieldNumber, idFieldType);
+			return this;
+		}
+
+		public StructureBuilder thenAddField(int fieldNumber, Type fieldType) {
+			structure.addField(fieldNumber, fieldType);
+			return this;
+		}
+
+		public Structure thenDoBuild() {
+			return structure;
+		}
+	}
+
 }
