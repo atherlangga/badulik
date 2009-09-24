@@ -39,7 +39,7 @@ public class Structure {
 		return fields.size();
 	}
 
-	public boolean hasSameTypesWith(Datum[] data) {
+	public boolean compatibleWith(Datum[] data) {
 		int fieldLength = data.length;
 		for (int fieldNumber = 0; fieldNumber < fieldLength; fieldNumber++) {
 			if (!typeOfFieldNumber(fieldNumber)
