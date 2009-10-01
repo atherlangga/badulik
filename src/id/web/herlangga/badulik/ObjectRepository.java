@@ -28,10 +28,10 @@ public interface ObjectRepository {
 	 * 
 	 * @param object
 	 *            {@link Object} to store.
-	 * @param extractor
-	 *            {@link ObjectStatesExtractor} to extract object's state.
+	 * @param stateExtractor
+	 *            {@link ObjectStateExtractor} to extract object's state.
 	 */
-	public void save(Object object, ObjectStatesExtractor extractor);
+	public void save(Object object, ObjectStateExtractor stateExtractor);
 
 	/**
 	 * Delete specified object based on its ID.
@@ -61,8 +61,7 @@ public interface ObjectRepository {
 	/**
 	 * Generate valid sequence value. It's intended helping to create Object ID.
 	 * 
-	 * @return sequence value in the form of long intended to be used for Object
-	 *         ID.
+	 * @return sequence value in the form of long.
 	 */
 	public long generateSequenceValue();
 

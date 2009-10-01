@@ -8,7 +8,7 @@ import id.web.herlangga.badulik.definition.*;
  * @author angga
  * 
  */
-public interface ObjectStatesExtractor {
+public interface ObjectStateExtractor {
 
 	/**
 	 * Extract object's state so it can persisted and reconstituted back.

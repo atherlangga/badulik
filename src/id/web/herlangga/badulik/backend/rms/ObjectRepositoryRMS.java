@@ -36,7 +36,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException();
 	}
 
-	public void save(Object object, ObjectStatesExtractor extractor) {
+	public void save(Object object, ObjectStateExtractor extractor) {
 		Datum[] states = extractor.extractStatesFrom(object);
 		if (!objectStructure.compatibleWith(states)) {
 			throw new IllegalArgumentException("Incompatible Structure "
