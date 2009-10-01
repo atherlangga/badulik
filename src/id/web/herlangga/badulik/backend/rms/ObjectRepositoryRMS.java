@@ -17,25 +17,31 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	}
 
 	public Object find(Datum objectId, ObjectReconstitutor reconstitutor) {
-		if (isExist(objectId)) {
-			try {
-				Datum[] states = getPersistedStates(objectId);
-				return reconstitutor.reconstituteObjectFrom(states);
-			} catch (RecordStoreNotOpenException e) {
-				e.printStackTrace();
-			} catch (InvalidRecordIDException e) {
-				e.printStackTrace();
-			} catch (RecordStoreException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (!isExist(objectId)) {
+			throw new IllegalArgumentException("Object ID is not exist");
 		}
-		throw new IllegalArgumentException("Object Id is not exist");
+		try {
+			Datum[] states = getPersistedStates(objectId);
+			return reconstitutor.reconstituteObjectFrom(states);
+		} catch (RecordStoreNotOpenException e) {
+			e.printStackTrace();
+		} catch (InvalidRecordIDException e) {
+			e.printStackTrace();
+		} catch (RecordStoreException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		throw new RuntimeException();
 	}
 
 	public void save(Object object, ObjectStatesExtractor extractor) {
 		Datum[] states = extractor.extractStatesFrom(object);
+		if (!objectStructure.compatibleWith(states)) {
+			throw new IllegalArgumentException("Incompatible Structure "
+					+ "and extracted Object state");
+		}
 		Datum objectId = states[objectStructure.idFieldNumber()];
 
 		try {
@@ -89,6 +95,19 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		}
 
 		return result;
+	}
+
+	public long generateSequenceValue() {
+		try {
+			return RecordStoresGateway.recordStoreFor(recordStoreName)
+					.getNextRecordID();
+		} catch (RecordStoreNotOpenException e) {
+			e.printStackTrace();
+		} catch (RecordStoreException e) {
+			e.printStackTrace();
+		}
+
+		throw new RuntimeException();
 	}
 
 	public Datum[] fetchAllIds() {
