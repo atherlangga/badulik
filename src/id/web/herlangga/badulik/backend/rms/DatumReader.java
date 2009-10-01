@@ -15,31 +15,31 @@ abstract class DatumReader {
 
 	static class IntTypeReader extends DatumReader {
 		Datum readFrom(DataInput source) throws IOException {
-			return new Datum(Type.INT, new Integer(source.readInt()));
+			return Datum.of(source.readInt());
 		}
 	}
 
 	static class LongTypeReader extends DatumReader {
 		Datum readFrom(DataInput source) throws IOException {
-			return new Datum(Type.LONG, new Long(source.readLong()));
+			return Datum.of(source.readLong());
 		}
 	}
 
 	static class StringTypeReader extends DatumReader {
 		Datum readFrom(DataInput source) throws IOException {
-			return new Datum(Type.STRING, source.readUTF());
+			return Datum.of(source.readUTF());
 		}
 	}
 
 	static class DateTypeReader extends DatumReader {
 		Datum readFrom(DataInput source) throws IOException {
-			return new Datum(Type.DATE, new Date(source.readLong()));
+			return Datum.of(new Date(source.readLong()));
 		}
 	}
 
 	static class BoolTypeReader extends DatumReader {
 		Datum readFrom(DataInput source) throws IOException {
-			return new Datum(Type.BOOL, new Boolean(source.readBoolean()));
+			return Datum.of(source.readBoolean());
 		}
 	}
 

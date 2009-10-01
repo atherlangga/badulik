@@ -1,10 +1,32 @@
 package id.web.herlangga.badulik.definition;
 
+import java.util.*;
+
 public class Datum {
 	private final Type type;
 	private final Object value;
 	
-	public Datum(Type type, Object value) {
+	public static Datum of(int value) {
+		return new Datum(Type.INT, new Integer(value));
+	}
+	
+	public static Datum of(long value) {
+		return new Datum(Type.LONG, new Long(value));
+	}
+	
+	public static Datum of(String value) {
+		return new Datum(Type.STRING, value);
+	}
+	
+	public static Datum of(Date value) {
+		return new Datum(Type.DATE, value);
+	}
+	
+	public static Datum of(boolean value) {
+		return new Datum(Type.BOOL, new Boolean(value));
+	}
+	
+	private Datum(Type type, Object value) {
 		this.type = type;
 		this.value = value;
 	}
