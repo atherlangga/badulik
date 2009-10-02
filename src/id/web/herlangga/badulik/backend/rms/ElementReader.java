@@ -5,7 +5,7 @@ import id.web.herlangga.badulik.definition.*;
 import java.io.*;
 import java.util.*;
 
-abstract class DatumReader {
+abstract class ElementReader {
 	private static Hashtable mapping;
 	
 	static Element readFrom(byte[] rawData) throws IOException {
@@ -24,36 +24,36 @@ abstract class DatumReader {
 			mapping = createMapping();
 		}
 		Datatype type = Datatype.of(input.readByte());
-		return ((DatumReader) mapping.get(type)).read(input);
+		return ((ElementReader) mapping.get(type)).read(input);
 	}
 	
 	abstract Element read(DataInput input) throws IOException;
 
-	private static class IntTypeReader extends DatumReader {
+	private static class IntTypeReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(input.readInt());
 		}
 	}
 
-	private static class LongTypeReader extends DatumReader {
+	private static class LongTypeReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(input.readLong());
 		}
 	}
 
-	private static class StringTypeReader extends DatumReader {
+	private static class StringTypeReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(input.readUTF());
 		}
 	}
 
-	private static class DateTypeReader extends DatumReader {
+	private static class DateTypeReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(new Date(input.readLong()));
 		}
 	}
 
-	private static class BoolTypeReader extends DatumReader {
+	private static class BoolTypeReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(input.readBoolean());
 		}

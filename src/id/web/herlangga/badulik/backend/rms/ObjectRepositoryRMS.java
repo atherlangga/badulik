@@ -130,7 +130,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			for (int i = 0; i < total; i++) {
 				byte[] rawData = RecordStoresGateway.recordStoreFor(
 						objectIdRecordStoreName).getRecord(re.nextRecordId());
-				ids[i] = DatumReader.readFrom(rawData);
+				ids[i] = ElementReader.readFrom(rawData);
 			}
 			re.destroy();
 
@@ -165,7 +165,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
 		DataInputStream wrapper = new DataInputStream(reader);
 		for (int i = 0; i < fieldSize; i++) {
-			state[i] = DatumReader.readFrom(wrapper);
+			state[i] = ElementReader.readFrom(wrapper);
 		}
 		reader.close();
 		wrapper.close();
@@ -227,7 +227,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
 
-		DatumWriter.for_(datum.type()).writeTo(wrapper, datum);
+		ElementWriter.for_(datum.type()).writeTo(wrapper, datum);
 		byte[] rawData = writer.toByteArray();
 
 		writer.close();
@@ -245,7 +245,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 		public boolean matches(byte[] rawData) {
 			try {
-				Element currentObjectId = DatumReader.readFrom(rawData);
+				Element currentObjectId = ElementReader.readFrom(rawData);
 				return currentObjectId.equals(objectId);
 			} catch (IOException e) {
 				e.printStackTrace();

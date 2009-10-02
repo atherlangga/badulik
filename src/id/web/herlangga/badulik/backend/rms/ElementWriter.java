@@ -5,16 +5,16 @@ import id.web.herlangga.badulik.definition.*;
 import java.io.*;
 import java.util.*;
 
-abstract class DatumWriter {
+abstract class ElementWriter {
 	private static Hashtable mapping;
 	abstract void writeTo(DataOutput destination, Element datum)
 			throws IOException;
 
-	static DatumWriter for_(Datatype type) {
+	static ElementWriter for_(Datatype type) {
 		if (mapping == null) {
 			mapping = createMapping();
 		}
-		return (DatumWriter) mapping.get(type);
+		return (ElementWriter) mapping.get(type);
 	}
 	
 	protected void writeTypeMarkerTo(DataOutput destination, Element datum)
@@ -23,7 +23,7 @@ abstract class DatumWriter {
 		destination.writeByte(typeMarker);
 	}
 
-	static class IntWriter extends DatumWriter {
+	static class IntWriter extends ElementWriter {
 		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			int value = ((Integer) datum.value()).intValue();
@@ -31,7 +31,7 @@ abstract class DatumWriter {
 		}
 	}
 
-	static class LongWriter extends DatumWriter {
+	static class LongWriter extends ElementWriter {
 		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			long value = ((Long) datum.value()).longValue();
@@ -39,7 +39,7 @@ abstract class DatumWriter {
 		}
 	}
 
-	static class StringWriter extends DatumWriter {
+	static class StringWriter extends ElementWriter {
 		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			String value = (String) datum.value();
@@ -47,7 +47,7 @@ abstract class DatumWriter {
 		}
 	}
 
-	static class DateWriter extends DatumWriter {
+	static class DateWriter extends ElementWriter {
 		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			long dateValue = ((Date) datum.value()).getTime();
@@ -55,7 +55,7 @@ abstract class DatumWriter {
 		}
 	}
 
-	static class BoolWriter extends DatumWriter {
+	static class BoolWriter extends ElementWriter {
 		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			boolean value = ((Boolean) datum.value()).booleanValue();
