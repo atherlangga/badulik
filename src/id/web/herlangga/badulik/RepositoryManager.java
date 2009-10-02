@@ -1,9 +1,9 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.definition.Structure;
+import id.web.herlangga.badulik.definition.Schema;
 
 /**
- * Object repositories manager.
+ * {@link ObjectRepository} manager.
  * 
  * @author angga
  * 
@@ -12,18 +12,18 @@ public interface RepositoryManager {
 
 	/**
 	 * Get {@link ObjectRepository} given unique name identifier and the Object
-	 * {@link Structure}.
+	 * {@link Schema}.
 	 * 
 	 * @param name
 	 *            Unique identifier of the {@link ObjectRepository}.
-	 * @param objectStructure
-	 *            {@link Structure} of the Domain Object kept in the
+	 * @param objectSchema
+	 *            {@link Schema} of the Domain Object kept in the
 	 *            {@link ObjectRepository}.
-	 * @return existing {@link ObjectRepository} with name and {@link Structure}
+	 * @return existing {@link ObjectRepository} with name and {@link Schema}
 	 *         specified, or new {@link ObjectRepository} based on name and
-	 *         {@link Structure} supplied.
+	 *         {@link Schema} supplied.
 	 */
-	public ObjectRepository get(String name, Structure objectStructure);
+	public ObjectRepository get(String name, Schema objectSchema);
 
 	/**
 	 * Remove specified {@link ObjectRepository}.

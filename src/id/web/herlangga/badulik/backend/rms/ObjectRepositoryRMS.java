@@ -10,13 +10,13 @@ import javax.microedition.rms.*;
 public class ObjectRepositoryRMS implements ObjectRepository {
 	private final String objectIdRecordStoreName;
 	private final String objectStateRecordStoreName;
-	private final Structure objectStateStructure;
+	private final Schema objectSchema;
 
 	ObjectRepositoryRMS(String objectIdRecordStoreName,
-			String objectStateRecordStoreName, Structure objectStateStructure) {
+			String objectStateRecordStoreName, Schema objectSchema) {
 		this.objectIdRecordStoreName = objectIdRecordStoreName;
 		this.objectStateRecordStoreName = objectStateRecordStoreName;
-		this.objectStateStructure = objectStateStructure;
+		this.objectSchema = objectSchema;
 	}
 
 	public Object find(Element objectId, ObjectReconstitutor reconstitutor) {
@@ -44,7 +44,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		Element objectId = idExtractor.extractIdFrom(object);
 		Element[] state = stateExtractor.extractStateFrom(object);
 
-		if (!objectStateStructure.compatibleWith(state)) {
+		if (objectSchema.isNotCompatibleWith(state)) {
 			throw new IllegalArgumentException("Incompatible Structure "
 					+ "and extracted Object state");
 		}
@@ -145,7 +145,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			e.printStackTrace();
 		}
 
-		throw new RuntimeException("This line shouldn't be reached.");
+		throw new RuntimeException("Failed to fetch Object IDs.");
 	}
 
 	private Element[] getPersistedState(Element objectId)
@@ -159,7 +159,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	}
 
 	private Element[] generateStateFrom(byte[] rawData) throws IOException {
-		int fieldSize = objectStateStructure.fieldsSize();
+		int fieldSize = objectSchema.fieldsSize();
 		Element[] state = new Element[fieldSize];
 
 		ByteArrayInputStream reader = new ByteArrayInputStream(rawData);

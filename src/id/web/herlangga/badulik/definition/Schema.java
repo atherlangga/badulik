@@ -2,27 +2,22 @@ package id.web.herlangga.badulik.definition;
 
 import java.util.Vector;
 
-public class Structure {
+public class Schema {
 	private final Field[] fields;
 
-	private Structure(Field[] fields) {
+	private Schema(Field[] fields) {
 		this.fields = fields;
 	}
 
-	public static StructureBuilder buildNew() {
-		return new StructureBuilder();
-	}
-
-	public Datatype typeOfFieldNumber(int number) {
-		Field field = (Field) fields[number];
-		return field.fieldType();
+	public static SchemaBuilder buildNew() {
+		return new SchemaBuilder();
 	}
 
 	public int fieldsSize() {
 		return fields.length;
 	}
 
-	public boolean compatibleWith(Element[] data) {
+	public boolean isCompatibleWith(Element[] data) {
 		int dataLength = data.length;
 		
 		if (fields.length != dataLength) {
@@ -37,25 +32,34 @@ public class Structure {
 
 		return true;
 	}
+	
+	public boolean isNotCompatibleWith(Element[] data) {
+		return !isCompatibleWith(data);
+	}
+	
+	private Datatype typeOfFieldNumber(int number) {
+		Field field = (Field) fields[number];
+		return field.fieldType();
+	}
 
-	public static class StructureBuilder {
+	public static class SchemaBuilder {
 		private Vector proposedFields;
 		
-		private StructureBuilder() {
+		private SchemaBuilder() {
 			this.proposedFields = new Vector();
 		}
 
-		public StructureBuilder withField(String fieldName, Datatype fieldType) {
+		public SchemaBuilder withField(String fieldName, Datatype fieldType) {
 			Field field = new Field(fieldName, fieldType);
 			proposedFields.addElement(field);
 			return this;
 		}
 
-		public Structure thenGetResult() {
+		public Schema thenGetResult() {
 			Field[] fields = new Field[proposedFields.size()];
 			proposedFields.copyInto(fields);
 			
-			return new Structure(fields);
+			return new Schema(fields);
 		}
 	}
 

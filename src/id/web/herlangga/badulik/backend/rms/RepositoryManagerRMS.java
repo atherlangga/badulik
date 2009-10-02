@@ -7,12 +7,12 @@ public class RepositoryManagerRMS implements RepositoryManager {
 	private static final String ID_SUFFIX = "Id";
 	private static final String STATE_SUFFIX = "State";
 
-	public ObjectRepository get(String name, Structure objectStateStructure) {
+	public ObjectRepository get(String name, Schema objectSchema) {
 		String objectIdRecordStoreName = name + ID_SUFFIX;
 		String objectStateRecordStoreName = name + STATE_SUFFIX;
 
 		return new ObjectRepositoryRMS(objectIdRecordStoreName,
-				objectStateRecordStoreName, objectStateStructure);
+				objectStateRecordStoreName, objectSchema);
 	}
 
 	public void drop(String name) {
