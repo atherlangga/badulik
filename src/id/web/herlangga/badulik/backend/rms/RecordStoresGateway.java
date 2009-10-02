@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import javax.microedition.rms.*;
 
 /**
- * Provides functionality to manage {@link RecordStore}s.
+ * Provides functionality to manage {@link RecordStore}.
  * 
  * @author angga
  * 

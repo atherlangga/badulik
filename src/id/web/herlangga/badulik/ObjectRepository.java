@@ -11,10 +11,10 @@ import id.web.herlangga.badulik.definition.Datum;
 public interface ObjectRepository {
 
 	/**
-	 * Find object with specified ID.
+	 * Find Object with specified ID.
 	 * 
 	 * @param objectId
-	 *            {@link Datum} object ID.
+	 *            Object ID represented as {@link Datum}.
 	 * @param reconstitutor
 	 *            {@link ObjectReconstitutor} to be delegated the job of the
 	 *            object reconstitution.
@@ -28,13 +28,16 @@ public interface ObjectRepository {
 	 * 
 	 * @param object
 	 *            {@link Object} to store.
+	 * @param idExtractor
+	 *            {@link ObjectIdExtractor} to extract Object ID.
 	 * @param stateExtractor
-	 *            {@link ObjectStateExtractor} to extract object's state.
+	 *            {@link ObjectStateExtractor} to extract Object state.
 	 */
-	public void save(Object object, ObjectStateExtractor stateExtractor);
+	public void save(Object object, ObjectIdExtractor idExtractor,
+			ObjectStateExtractor stateExtractor);
 
 	/**
-	 * Delete specified object based on its ID.
+	 * Delete specified Object based on its ID.
 	 * 
 	 * @param objectId
 	 *            Object ID to delete from storage.
@@ -42,17 +45,17 @@ public interface ObjectRepository {
 	public void remove(Datum objectId);
 
 	/**
-	 * Check for object existance by its ID.
+	 * Check for Object existance by its ID.
 	 * 
 	 * @param objectId
-	 *            Object ID to search.
-	 * @return <code>true</code> if specified object ID exist, else
+	 *            Object ID to check.
+	 * @return <code>true</code> if specified Object ID exist, else
 	 *         <code>false</code>.
 	 */
 	public boolean isExist(Datum objectId);
 
 	/**
-	 * Find and return all object IDs exist in the storage.
+	 * Find and return all Object IDs exist in the storage.
 	 * 
 	 * @return array of long contains object IDs.
 	 */
@@ -61,7 +64,7 @@ public interface ObjectRepository {
 	/**
 	 * Generate valid sequence value. It's intended helping to create Object ID.
 	 * 
-	 * @return sequence value in the form of long.
+	 * @return sequence value represented as long.
 	 */
 	public long generateSequenceValue();
 
