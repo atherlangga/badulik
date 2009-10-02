@@ -29,31 +29,31 @@ abstract class ElementReader {
 	
 	abstract Element read(DataInput input) throws IOException;
 
-	private static class IntTypeReader extends ElementReader {
+	private static class IntReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(input.readInt());
 		}
 	}
 
-	private static class LongTypeReader extends ElementReader {
+	private static class LongReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(input.readLong());
 		}
 	}
 
-	private static class StringTypeReader extends ElementReader {
+	private static class StringReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(input.readUTF());
 		}
 	}
 
-	private static class DateTypeReader extends ElementReader {
+	private static class DateReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(new Date(input.readLong()));
 		}
 	}
 
-	private static class BoolTypeReader extends ElementReader {
+	private static class BoolReader extends ElementReader {
 		Element read(DataInput input) throws IOException {
 			return Element.of(input.readBoolean());
 		}
@@ -61,11 +61,11 @@ abstract class ElementReader {
 
 	private static Hashtable createMapping() {
 		Hashtable mapping = new Hashtable(5);
-		mapping.put(Datatype.INT, new IntTypeReader());
-		mapping.put(Datatype.LONG, new LongTypeReader());
-		mapping.put(Datatype.STRING, new StringTypeReader());
-		mapping.put(Datatype.DATE, new DateTypeReader());
-		mapping.put(Datatype.BOOL, new BoolTypeReader());
+		mapping.put(Datatype.INT, new IntReader());
+		mapping.put(Datatype.LONG, new LongReader());
+		mapping.put(Datatype.STRING, new StringReader());
+		mapping.put(Datatype.DATE, new DateReader());
+		mapping.put(Datatype.BOOL, new BoolReader());
 
 		return mapping;
 	}
