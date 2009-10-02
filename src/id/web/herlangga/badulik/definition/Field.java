@@ -1,24 +1,28 @@
 package id.web.herlangga.badulik.definition;
 
 class Field {
-	private final String fieldName;
-	private final Datatype fieldType;
+	private final String name;
+	private final Datatype type;
 	
-	Field(String fieldName, Datatype fieldType) {
-		this.fieldName = fieldName;
-		this.fieldType = fieldType;
+	static Field of(String name, Datatype type) {
+		return new Field(name, type);
+	}
+	
+	private Field(String name, Datatype type) {
+		this.name = name;
+		this.type = type;
 	}
 
 	String name() {
-		return fieldName;
+		return name;
 	}
 
 	Datatype type() {
-		return fieldType;
+		return type;
 	}
 	
 	boolean isCompatibleWith(Element element) {
-		return fieldType.equals(element.type());
+		return type.equals(element.type());
 	}
 	
 	boolean isIncompatibleWith(Element element) {
@@ -29,9 +33,9 @@ class Field {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((fieldName == null) ? 0 : fieldName.hashCode());
+				+ ((name == null) ? 0 : name.hashCode());
 		result = prime * result
-				+ ((fieldType == null) ? 0 : fieldType.hashCode());
+				+ ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -46,18 +50,18 @@ class Field {
 			return false;
 		}
 		Field other = (Field) obj;
-		if (fieldName == null) {
-			if (other.fieldName != null) {
+		if (name == null) {
+			if (other.name != null) {
 				return false;
 			}
-		} else if (!fieldName.equals(other.fieldName)) {
+		} else if (!name.equals(other.name)) {
 			return false;
 		}
-		if (fieldType == null) {
-			if (other.fieldType != null) {
+		if (type == null) {
+			if (other.type != null) {
 				return false;
 			}
-		} else if (!fieldType.equals(other.fieldType)) {
+		} else if (!type.equals(other.type)) {
 			return false;
 		}
 		return true;

@@ -70,7 +70,7 @@ public class Schema {
 		}
 
 		public SchemaBuilder withField(String fieldName, Datatype fieldType) {
-			Field field = new Field(fieldName, fieldType);
+			Field field = Field.of(fieldName, fieldType);
 			if (proposedFields.contains(field)) {
 				throw new IllegalArgumentException(
 						"Specified field already exists");
