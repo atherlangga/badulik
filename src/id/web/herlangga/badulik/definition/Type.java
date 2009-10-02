@@ -3,12 +3,13 @@ package id.web.herlangga.badulik.definition;
 import java.util.*;
 
 /**
- * Define supported types for persisting object's states.
+ * Define supported {@link Type} for persisting Object.
  * 
  * @author angga
  * 
  */
 public class Type {
+	private static Hashtable mapping;
 	private final byte type;
 
 	private Type(byte type) {
@@ -16,22 +17,25 @@ public class Type {
 	}
 
 	public static Type of(byte type) {
-		return (Type) typeMapping().get(new Byte(type));
+		if (mapping == null) {
+			mapping = createMapping();
+		}
+		return (Type) mapping.get(new Byte(type));
 	}
 
 	public byte typeAsByte() {
 		return type;
 	}
 	
-	private static final Hashtable typeMapping() {
-		Hashtable typeMapping = new Hashtable();
-		typeMapping.put(new Byte((byte) 1), INT);
-		typeMapping.put(new Byte((byte) 2), LONG);
-		typeMapping.put(new Byte((byte) 3), STRING);
-		typeMapping.put(new Byte((byte) 4), DATE);
-		typeMapping.put(new Byte((byte) 5), BOOL);
+	private static final Hashtable createMapping() {
+		Hashtable mapping = new Hashtable();
+		mapping.put(new Byte((byte) 1), INT);
+		mapping.put(new Byte((byte) 2), LONG);
+		mapping.put(new Byte((byte) 3), STRING);
+		mapping.put(new Byte((byte) 4), DATE);
+		mapping.put(new Byte((byte) 5), BOOL);
 		
-		return typeMapping;
+		return mapping;
 	}
 
 	public static final Type INT = new Type((byte) 1);

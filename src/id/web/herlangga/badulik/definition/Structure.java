@@ -3,45 +3,32 @@ package id.web.herlangga.badulik.definition;
 import java.util.Vector;
 
 public class Structure {
-	private final int idFieldNumber;
-	private final Type idFieldType;
+	private final Field[] fields;
 
-	private final Vector fields = new Vector();
-
-	private Structure(int idFieldNumber, Type idFieldType) {
-		this.idFieldNumber = idFieldNumber;
-		this.idFieldType = idFieldType;
+	private Structure(Field[] fields) {
+		this.fields = fields;
 	}
 
 	public static StructureBuilder buildNew() {
 		return new StructureBuilder();
 	}
 
-	public void addField(int fieldNumber, Type fieldType) {
-		Field field = new Field(fieldNumber, fieldType);
-		fields.addElement(field);
-	}
-
-	public int idFieldNumber() {
-		return idFieldNumber;
-	}
-
-	public Type idFieldType() {
-		return idFieldType;
-	}
-
 	public Type typeOfFieldNumber(int number) {
-		Field field = (Field) fields.elementAt(number);
+		Field field = (Field) fields[number];
 		return field.fieldType();
 	}
 
 	public int fieldsSize() {
-		return fields.size();
+		return fields.length;
 	}
 
 	public boolean compatibleWith(Datum[] data) {
-		int fieldLength = data.length;
-		for (int fieldNumber = 0; fieldNumber < fieldLength; fieldNumber++) {
+		int dataLength = data.length;
+		
+		if (fields.length != dataLength) {
+			return false;
+		}
+		for (int fieldNumber = 0; fieldNumber < dataLength; fieldNumber++) {
 			if (!typeOfFieldNumber(fieldNumber)
 					.equals(data[fieldNumber].type())) {
 				return false;
@@ -52,21 +39,23 @@ public class Structure {
 	}
 
 	public static class StructureBuilder {
-		private Structure structure;
-
-		public StructureBuilder withIdField(int idFieldNumber, Type idFieldType) {
-			structure = new Structure(idFieldNumber, idFieldType);
-			structure.addField(idFieldNumber, idFieldType);
-			return this;
+		private Vector proposedFields;
+		
+		private StructureBuilder() {
+			this.proposedFields = new Vector();
 		}
 
-		public StructureBuilder andField(int fieldNumber, Type fieldType) {
-			structure.addField(fieldNumber, fieldType);
+		public StructureBuilder withField(String fieldName, Type fieldType) {
+			Field field = new Field(fieldName, fieldType);
+			proposedFields.addElement(field);
 			return this;
 		}
 
 		public Structure thenGetResult() {
-			return structure;
+			Field[] fields = new Field[proposedFields.size()];
+			proposedFields.copyInto(fields);
+			
+			return new Structure(fields);
 		}
 	}
 
