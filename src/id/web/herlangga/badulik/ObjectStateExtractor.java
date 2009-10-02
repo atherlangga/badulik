@@ -12,7 +12,7 @@ import id.web.herlangga.badulik.definition.*;
 public interface ObjectStateExtractor {
 
 	/**
-	 * Extract object's state so it can persisted and reconstituted back.
+	 * Extract object's state so it can persisted and reconstituted.
 	 * 
 	 * @param toExtract
 	 *            Object which state is about to be extracted.
