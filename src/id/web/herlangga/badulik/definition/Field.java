@@ -9,12 +9,20 @@ class Field {
 		this.fieldType = fieldType;
 	}
 
-	String fieldName() {
+	String name() {
 		return fieldName;
 	}
 
-	Datatype fieldType() {
+	Datatype type() {
 		return fieldType;
+	}
+	
+	boolean isCompatibleWith(Element element) {
+		return fieldType.equals(element.type());
+	}
+	
+	boolean isIncompatibleWith(Element element) {
+		return !isCompatibleWith(element);
 	}
 
 	public int hashCode() {

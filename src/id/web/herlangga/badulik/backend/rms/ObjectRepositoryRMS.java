@@ -44,7 +44,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		Element objectId = idExtractor.extractIdFrom(object);
 		Element[] state = stateExtractor.extractStateFrom(object);
 
-		if (objectSchema.isNotCompatibleWith(state)) {
+		if (objectSchema.isIncompatibleWith(state)) {
 			throw new IllegalArgumentException("Incompatible Structure "
 					+ "and extracted Object state");
 		}

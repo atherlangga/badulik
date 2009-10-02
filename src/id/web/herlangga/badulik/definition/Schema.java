@@ -2,6 +2,12 @@ package id.web.herlangga.badulik.definition;
 
 import java.util.Vector;
 
+/**
+ * Object state definition.
+ * 
+ * @author angga
+ * 
+ */
 public class Schema {
 	private final Field[] fields;
 
@@ -12,45 +18,63 @@ public class Schema {
 	public static SchemaBuilder buildNew() {
 		return new SchemaBuilder();
 	}
-
+	
 	public int fieldsSize() {
 		return fields.length;
 	}
-
-	public boolean isCompatibleWith(Element[] data) {
-		int dataLength = data.length;
-		
-		if (fields.length != dataLength) {
+	
+	public boolean hasSameSizeWith(Element[] elements) {
+		return fields.length == elements.length;
+	}
+	
+	public boolean isCompatibleWith(Element[] elements) {
+		if (!hasSameSizeWith(elements)) {
 			return false;
 		}
-		for (int fieldNumber = 0; fieldNumber < dataLength; fieldNumber++) {
-			if (!typeOfFieldNumber(fieldNumber)
-					.equals(data[fieldNumber].type())) {
+		
+		int dataLength = elements.length;
+		for (int i = 0; i < dataLength; i++) {
+			if (fields[i].isIncompatibleWith(elements[i])) {
 				return false;
 			}
 		}
 
 		return true;
 	}
-	
-	public boolean isNotCompatibleWith(Element[] data) {
+
+	public boolean isIncompatibleWith(Element[] data) {
 		return !isCompatibleWith(data);
 	}
 	
-	private Datatype typeOfFieldNumber(int number) {
-		Field field = (Field) fields[number];
-		return field.fieldType();
+	int fieldNumberOf(String fieldName) {
+		int fieldLength = fields.length;
+		for (int fieldNumber = 0; fieldNumber < fieldLength; fieldNumber++) {
+			Field currentField = fields[fieldNumber];
+			if (currentField.name().equals(fieldName)) {
+				return fieldNumber;
+			}
+		}
+		
+		throw new IllegalArgumentException(fieldName + " is not exist.");
+	}
+	
+	Field fieldOf(String fieldName) {
+		return fields[fieldNumberOf(fieldName)];
 	}
 
 	public static class SchemaBuilder {
 		private Vector proposedFields;
-		
+
 		private SchemaBuilder() {
 			this.proposedFields = new Vector();
 		}
 
 		public SchemaBuilder withField(String fieldName, Datatype fieldType) {
 			Field field = new Field(fieldName, fieldType);
+			if (proposedFields.contains(field)) {
+				throw new IllegalArgumentException(
+						"Specified field already exists");
+			}
 			proposedFields.addElement(field);
 			return this;
 		}
@@ -58,7 +82,7 @@ public class Schema {
 		public Schema thenGetResult() {
 			Field[] fields = new Field[proposedFields.size()];
 			proposedFields.copyInto(fields);
-			
+
 			return new Schema(fields);
 		}
 	}
