@@ -38,10 +38,30 @@ public class Datatype {
 		return mapping;
 	}
 
-	public static final Datatype INT = new Datatype((byte) 1);
-	public static final Datatype LONG = new Datatype((byte) 2);
-	public static final Datatype STRING = new Datatype((byte) 3);
-	public static final Datatype DATE = new Datatype((byte) 4);
-	public static final Datatype BOOL = new Datatype((byte) 5);
+	public static final Datatype INT = new Datatype((byte) 1) {
+		public String toString() {
+			return "Int";
+		}
+	};
+	public static final Datatype LONG = new Datatype((byte) 2) {
+		public String toString() {
+			return "Long";
+		}
+	};
+	public static final Datatype STRING = new Datatype((byte) 3) {
+		public String toString() {
+			return "String";
+		}
+	};
+	public static final Datatype DATE = new Datatype((byte) 4) {
+		public String toString() {
+			return "Date";
+		}
+	};
+	public static final Datatype BOOL = new Datatype((byte) 5) {
+		public String toString() {
+			return "Bool";
+		}
+	};
 
 }

@@ -18,5 +18,5 @@ public interface ObjectStateExtractor {
 	 *            Object which state is about to be extracted.
 	 * @return extracted data which is represented by array of {@link Element}.
 	 */
-	public Element[] extractStateFrom(Object toExtract);
+	public Tuple extractStateFrom(Object toExtract);
 }

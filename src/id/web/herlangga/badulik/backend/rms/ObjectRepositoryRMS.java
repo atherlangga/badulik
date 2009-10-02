@@ -2,8 +2,10 @@ package id.web.herlangga.badulik.backend.rms;
 
 import id.web.herlangga.badulik.*;
 import id.web.herlangga.badulik.definition.*;
+import id.web.herlangga.badulik.definition.Tuple.*;
 
 import java.io.*;
+import java.util.*;
 
 import javax.microedition.rms.*;
 
@@ -24,7 +26,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 			throw new IllegalArgumentException("Object ID is not exist");
 		}
 		try {
-			Element[] state = getPersistedState(objectId);
+			Tuple state = getPersistedState(objectId);
 			return reconstitutor.reconstituteObjectWith(objectId, state);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -42,11 +44,11 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	public void save(Object object, ObjectIdExtractor idExtractor,
 			ObjectStateExtractor stateExtractor) {
 		Element objectId = idExtractor.extractIdFrom(object);
-		Element[] state = stateExtractor.extractStateFrom(object);
+		Tuple state = stateExtractor.extractStateFrom(object);
 
-		if (objectSchema.isIncompatibleWith(state)) {
-			throw new IllegalArgumentException("Incompatible Structure "
-					+ "and extracted Object state");
+		if (!objectSchema.equals(state.schema())) {
+			throw new IllegalArgumentException("Structure "
+					+ "and extracted Object state are not equals");
 		}
 
 		try {
@@ -148,7 +150,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException("Failed to fetch Object IDs.");
 	}
 
-	private Element[] getPersistedState(Element objectId)
+	private Tuple getPersistedState(Element objectId)
 			throws RecordStoreNotOpenException, InvalidRecordIDException,
 			RecordStoreException, IOException {
 		int recordId = translateToRecordIdFrom(objectId);
@@ -158,19 +160,20 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		return generateStateFrom(rawData);
 	}
 
-	private Element[] generateStateFrom(byte[] rawData) throws IOException {
+	private Tuple generateStateFrom(byte[] rawData) throws IOException {
 		int fieldSize = objectSchema.fieldsSize();
-		Element[] state = new Element[fieldSize];
+		TupleBuilder tupleBuilder = Tuple.buildNew().withSchema(objectSchema);
 
 		ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
 		DataInputStream wrapper = new DataInputStream(reader);
 		for (int i = 0; i < fieldSize; i++) {
-			state[i] = ElementReader.readFrom(wrapper);
+			Element element = ElementReader.readFrom(wrapper);
+			tupleBuilder.thenAddColumn(objectSchema.fieldNameOf(i), element);
 		}
 		reader.close();
 		wrapper.close();
 
-		return state;
+		return tupleBuilder.thenGetResult();
 	}
 
 	private int translateToRecordIdFrom(Element objectId)
@@ -209,12 +212,13 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 						objectStateRawData.length);
 	}
 
-	private byte[] generateRawDataFrom(Element[] state) throws IOException {
+	private byte[] generateRawDataFrom(Tuple state) throws IOException {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 
-		int dataFieldLength = state.length;
-		for (int i = 0; i < dataFieldLength; i++) {
-			writer.write(generateRawDataFrom(state[i]));
+		Enumeration elementsEnum = state.elementsEnumeration();
+		while (elementsEnum.hasMoreElements()) {
+			writer.write(generateRawDataFrom((Element) elementsEnum
+					.nextElement()));
 		}
 
 		byte[] rawData = writer.toByteArray();

@@ -1,6 +1,6 @@
 package id.web.herlangga.badulik.definition;
 
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Object state definition.
@@ -19,12 +19,20 @@ public class Schema {
 		return new SchemaBuilder();
 	}
 	
+	public String fieldNameOf(int fieldNumber) {
+		return fields[fieldNumber].name();
+	}
+	
 	public int fieldsSize() {
 		return fields.length;
 	}
 	
 	public boolean hasSameSizeWith(Element[] elements) {
 		return fields.length == elements.length;
+	}
+	
+	public boolean hasDifferentSizeWith(Element[] elements) {
+		return !hasSameSizeWith(elements);
 	}
 	
 	public boolean isCompatibleWith(Element[] elements) {
@@ -60,6 +68,46 @@ public class Schema {
 	
 	Field fieldOf(String fieldName) {
 		return fields[fieldNumberOf(fieldName)];
+	}
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Schema.hashCode(fields);
+		return result;
+	}
+	
+	private static int hashCode(Object[] array) {
+		int prime = 31;
+		if (array == null) {
+			return 0;
+		}
+		int result = 1;
+		for (int index = 0; index < array.length; index++) {
+			result = prime * result
+					+ (array[index] == null ? 0 : array[index].hashCode());
+		}
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Schema other = (Schema) obj;
+		int fieldsLength = fields.length;
+		for (int i = 0; i < fieldsLength; i++) {
+			if (!fields[i].equals(other.fields[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static class SchemaBuilder {
