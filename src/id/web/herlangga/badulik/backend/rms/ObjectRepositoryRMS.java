@@ -19,12 +19,12 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		this.objectStateStructure = objectStateStructure;
 	}
 
-	public Object find(Datum objectId, ObjectReconstitutor reconstitutor) {
+	public Object find(Element objectId, ObjectReconstitutor reconstitutor) {
 		if (!isExist(objectId)) {
 			throw new IllegalArgumentException("Object ID is not exist");
 		}
 		try {
-			Datum[] state = getPersistedState(objectId);
+			Element[] state = getPersistedState(objectId);
 			return reconstitutor.reconstituteObjectWith(objectId, state);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
@@ -41,8 +41,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 	public void save(Object object, ObjectIdExtractor idExtractor,
 			ObjectStateExtractor stateExtractor) {
-		Datum objectId = idExtractor.extractIdFrom(object);
-		Datum[] state = stateExtractor.extractStateFrom(object);
+		Element objectId = idExtractor.extractIdFrom(object);
+		Element[] state = stateExtractor.extractStateFrom(object);
 
 		if (!objectStateStructure.compatibleWith(state)) {
 			throw new IllegalArgumentException("Incompatible Structure "
@@ -70,7 +70,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		}
 	}
 
-	public void remove(Datum objectId) {
+	public void remove(Element objectId) {
 		try {
 			int recordId = translateToRecordIdFrom(objectId);
 			RecordStoresGateway.recordStoreFor(objectIdRecordStoreName)
@@ -86,7 +86,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		}
 	}
 
-	public boolean isExist(Datum objectId) {
+	public boolean isExist(Element objectId) {
 		RecordFilter objectIdFilter = new ObjectIdFilter(objectId);
 		boolean result = false;
 
@@ -118,14 +118,14 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException();
 	}
 
-	public Datum[] fetchAllIds() {
+	public Element[] fetchAllIds() {
 		try {
 			RecordEnumeration re = RecordStoresGateway.recordStoreFor(
 					objectIdRecordStoreName)
 					.enumerateRecords(null, null, false);
 			int total = RecordStoresGateway.recordStoreFor(
 					objectIdRecordStoreName).getNumRecords();
-			Datum[] ids = new Datum[total];
+			Element[] ids = new Element[total];
 
 			for (int i = 0; i < total; i++) {
 				byte[] rawData = RecordStoresGateway.recordStoreFor(
@@ -148,7 +148,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException("This line shouldn't be reached.");
 	}
 
-	private Datum[] getPersistedState(Datum objectId)
+	private Element[] getPersistedState(Element objectId)
 			throws RecordStoreNotOpenException, InvalidRecordIDException,
 			RecordStoreException, IOException {
 		int recordId = translateToRecordIdFrom(objectId);
@@ -158,9 +158,9 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		return generateStateFrom(rawData);
 	}
 
-	private Datum[] generateStateFrom(byte[] rawData) throws IOException {
+	private Element[] generateStateFrom(byte[] rawData) throws IOException {
 		int fieldSize = objectStateStructure.fieldsSize();
-		Datum[] state = new Datum[fieldSize];
+		Element[] state = new Element[fieldSize];
 
 		ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
 		DataInputStream wrapper = new DataInputStream(reader);
@@ -173,7 +173,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		return state;
 	}
 
-	private int translateToRecordIdFrom(Datum objectId)
+	private int translateToRecordIdFrom(Element objectId)
 			throws RecordStoreNotOpenException, InvalidRecordIDException {
 		RecordFilter objectIdFilter = new ObjectIdFilter(objectId);
 		RecordEnumeration re = RecordStoresGateway.recordStoreFor(
@@ -199,7 +199,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 				.addRecord(objectStateRawData, 0, objectStateRawData.length);
 	}
 
-	private void editExisting(Datum objectId, byte[] objectStateRawData)
+	private void editExisting(Element objectId, byte[] objectStateRawData)
 			throws IOException, RecordStoreNotOpenException,
 			InvalidRecordIDException, RecordStoreFullException,
 			RecordStoreException {
@@ -209,7 +209,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 						objectStateRawData.length);
 	}
 
-	private byte[] generateRawDataFrom(Datum[] state) throws IOException {
+	private byte[] generateRawDataFrom(Element[] state) throws IOException {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 
 		int dataFieldLength = state.length;
@@ -223,7 +223,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		return rawData;
 	}
 
-	private byte[] generateRawDataFrom(Datum datum) throws IOException {
+	private byte[] generateRawDataFrom(Element datum) throws IOException {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
 
@@ -237,15 +237,15 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	}
 
 	private class ObjectIdFilter implements RecordFilter {
-		private final Datum objectId;
+		private final Element objectId;
 
-		private ObjectIdFilter(Datum objectId) {
+		private ObjectIdFilter(Element objectId) {
 			this.objectId = objectId;
 		}
 
 		public boolean matches(byte[] rawData) {
 			try {
-				Datum currentObjectId = DatumReader.readFrom(rawData);
+				Element currentObjectId = DatumReader.readFrom(rawData);
 				return currentObjectId.equals(objectId);
 			} catch (IOException e) {
 				e.printStackTrace();

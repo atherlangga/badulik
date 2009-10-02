@@ -2,9 +2,9 @@ package id.web.herlangga.badulik.definition;
 
 class Field {
 	private final String fieldName;
-	private final Type fieldType;
+	private final Datatype fieldType;
 	
-	Field(String fieldName, Type fieldType) {
+	Field(String fieldName, Datatype fieldType) {
 		this.fieldName = fieldName;
 		this.fieldType = fieldType;
 	}
@@ -13,7 +13,7 @@ class Field {
 		return fieldName;
 	}
 
-	Type fieldType() {
+	Datatype fieldType() {
 		return fieldType;
 	}
 

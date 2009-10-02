@@ -1,6 +1,6 @@
 package id.web.herlangga.badulik;
 
-import id.web.herlangga.badulik.definition.Datum;
+import id.web.herlangga.badulik.definition.Element;
 
 /**
  * Object repository.
@@ -14,13 +14,13 @@ public interface ObjectRepository {
 	 * Find Object with specified ID.
 	 * 
 	 * @param objectId
-	 *            Object ID represented as {@link Datum}.
+	 *            Object ID represented as {@link Element}.
 	 * @param reconstitutor
 	 *            {@link ObjectReconstitutor} to be delegated the job of the
 	 *            object reconstitution.
 	 * @return Object with specified ID.
 	 */
-	public Object find(Datum objectId, ObjectReconstitutor reconstitutor);
+	public Object find(Element objectId, ObjectReconstitutor reconstitutor);
 
 	/**
 	 * Store object. Based on the extracted object ID, {@link ObjectRepository}
@@ -42,7 +42,7 @@ public interface ObjectRepository {
 	 * @param objectId
 	 *            Object ID to delete from storage.
 	 */
-	public void remove(Datum objectId);
+	public void remove(Element objectId);
 
 	/**
 	 * Check for Object existance by its ID.
@@ -52,14 +52,14 @@ public interface ObjectRepository {
 	 * @return <code>true</code> if specified Object ID exist, else
 	 *         <code>false</code>.
 	 */
-	public boolean isExist(Datum objectId);
+	public boolean isExist(Element objectId);
 
 	/**
 	 * Find and return all Object IDs exist in the storage.
 	 * 
 	 * @return array of long contains object IDs.
 	 */
-	public Datum[] fetchAllIds();
+	public Element[] fetchAllIds();
 
 	/**
 	 * Generate valid sequence value. It's intended helping to create Object ID.

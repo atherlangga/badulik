@@ -16,7 +16,7 @@ public interface ObjectStateExtractor {
 	 * 
 	 * @param toExtract
 	 *            Object which state is about to be extracted.
-	 * @return extracted data which is represented by array of {@link Datum}.
+	 * @return extracted data which is represented by array of {@link Element}.
 	 */
-	public Datum[] extractStateFrom(Object toExtract);
+	public Element[] extractStateFrom(Object toExtract);
 }

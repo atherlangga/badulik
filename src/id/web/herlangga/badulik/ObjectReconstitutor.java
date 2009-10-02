@@ -17,8 +17,8 @@ public interface ObjectReconstitutor {
 	 * @param objecId
 	 *            Object ID.
 	 * @param state
-	 *            Array of {@link Datum} to represents Object state.
+	 *            Array of {@link Element} to represents Object state.
 	 * @return reconstituted Object.
 	 */
-	public Object reconstituteObjectWith(Datum objecId, Datum[] state);
+	public Object reconstituteObjectWith(Element objecId, Element[] state);
 }

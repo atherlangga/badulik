@@ -7,24 +7,24 @@ import java.util.*;
 
 abstract class DatumWriter {
 	private static Hashtable mapping;
-	abstract void writeTo(DataOutput destination, Datum datum)
+	abstract void writeTo(DataOutput destination, Element datum)
 			throws IOException;
 
-	static DatumWriter for_(Type type) {
+	static DatumWriter for_(Datatype type) {
 		if (mapping == null) {
 			mapping = createMapping();
 		}
 		return (DatumWriter) mapping.get(type);
 	}
 	
-	protected void writeTypeMarkerTo(DataOutput destination, Datum datum)
+	protected void writeTypeMarkerTo(DataOutput destination, Element datum)
 			throws IOException {
 		byte typeMarker = datum.type().typeAsByte();
 		destination.writeByte(typeMarker);
 	}
 
 	static class IntWriter extends DatumWriter {
-		void writeTo(DataOutput destination, Datum datum) throws IOException {
+		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			int value = ((Integer) datum.value()).intValue();
 			destination.writeInt(value);
@@ -32,7 +32,7 @@ abstract class DatumWriter {
 	}
 
 	static class LongWriter extends DatumWriter {
-		void writeTo(DataOutput destination, Datum datum) throws IOException {
+		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			long value = ((Long) datum.value()).longValue();
 			destination.writeLong(value);
@@ -40,7 +40,7 @@ abstract class DatumWriter {
 	}
 
 	static class StringWriter extends DatumWriter {
-		void writeTo(DataOutput destination, Datum datum) throws IOException {
+		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			String value = (String) datum.value();
 			destination.writeUTF(value);
@@ -48,7 +48,7 @@ abstract class DatumWriter {
 	}
 
 	static class DateWriter extends DatumWriter {
-		void writeTo(DataOutput destination, Datum datum) throws IOException {
+		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			long dateValue = ((Date) datum.value()).getTime();
 			destination.writeLong(dateValue);
@@ -56,7 +56,7 @@ abstract class DatumWriter {
 	}
 
 	static class BoolWriter extends DatumWriter {
-		void writeTo(DataOutput destination, Datum datum) throws IOException {
+		void writeTo(DataOutput destination, Element datum) throws IOException {
 			writeTypeMarkerTo(destination, datum);
 			boolean value = ((Boolean) datum.value()).booleanValue();
 			destination.writeBoolean(value);
@@ -65,11 +65,11 @@ abstract class DatumWriter {
 	
 	private static Hashtable createMapping() {
 		Hashtable mapping = new Hashtable(5);
-		mapping.put(Type.INT, new IntWriter());
-		mapping.put(Type.LONG, new LongWriter());
-		mapping.put(Type.STRING, new StringWriter());
-		mapping.put(Type.DATE, new DateWriter());
-		mapping.put(Type.BOOL, new BoolWriter());
+		mapping.put(Datatype.INT, new IntWriter());
+		mapping.put(Datatype.LONG, new LongWriter());
+		mapping.put(Datatype.STRING, new StringWriter());
+		mapping.put(Datatype.DATE, new DateWriter());
+		mapping.put(Datatype.BOOL, new BoolWriter());
 		
 		return mapping;
 	}

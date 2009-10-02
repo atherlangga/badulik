@@ -13,7 +13,7 @@ public class Structure {
 		return new StructureBuilder();
 	}
 
-	public Type typeOfFieldNumber(int number) {
+	public Datatype typeOfFieldNumber(int number) {
 		Field field = (Field) fields[number];
 		return field.fieldType();
 	}
@@ -22,7 +22,7 @@ public class Structure {
 		return fields.length;
 	}
 
-	public boolean compatibleWith(Datum[] data) {
+	public boolean compatibleWith(Element[] data) {
 		int dataLength = data.length;
 		
 		if (fields.length != dataLength) {
@@ -45,7 +45,7 @@ public class Structure {
 			this.proposedFields = new Vector();
 		}
 
-		public StructureBuilder withField(String fieldName, Type fieldType) {
+		public StructureBuilder withField(String fieldName, Datatype fieldType) {
 			Field field = new Field(fieldName, fieldType);
 			proposedFields.addElement(field);
 			return this;

@@ -3,24 +3,24 @@ package id.web.herlangga.badulik.definition;
 import java.util.*;
 
 /**
- * Define supported {@link Type} for persisting Object.
+ * Define supported {@link Datatype} for persisting Object.
  * 
  * @author angga
  * 
  */
-public class Type {
+public class Datatype {
 	private static Hashtable mapping;
 	private final byte type;
 
-	private Type(byte type) {
+	private Datatype(byte type) {
 		this.type = type;
 	}
 
-	public static Type of(byte type) {
+	public static Datatype of(byte type) {
 		if (mapping == null) {
 			mapping = createMapping();
 		}
-		return (Type) mapping.get(new Byte(type));
+		return (Datatype) mapping.get(new Byte(type));
 	}
 
 	public byte typeAsByte() {
@@ -38,10 +38,10 @@ public class Type {
 		return mapping;
 	}
 
-	public static final Type INT = new Type((byte) 1);
-	public static final Type LONG = new Type((byte) 2);
-	public static final Type STRING = new Type((byte) 3);
-	public static final Type DATE = new Type((byte) 4);
-	public static final Type BOOL = new Type((byte) 5);
+	public static final Datatype INT = new Datatype((byte) 1);
+	public static final Datatype LONG = new Datatype((byte) 2);
+	public static final Datatype STRING = new Datatype((byte) 3);
+	public static final Datatype DATE = new Datatype((byte) 4);
+	public static final Datatype BOOL = new Datatype((byte) 5);
 
 }

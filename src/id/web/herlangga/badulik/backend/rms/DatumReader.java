@@ -8,64 +8,64 @@ import java.util.*;
 abstract class DatumReader {
 	private static Hashtable mapping;
 	
-	static Datum readFrom(byte[] rawData) throws IOException {
+	static Element readFrom(byte[] rawData) throws IOException {
 		ByteArrayInputStream source = new ByteArrayInputStream(rawData);
 		DataInputStream input = new DataInputStream(source);
 		
-		Datum result = readFrom(input);
+		Element result = readFrom(input);
 		input.close();
 		source.close();
 		
 		return result;
 	}
 	
-	static Datum readFrom(DataInput input) throws IOException {
+	static Element readFrom(DataInput input) throws IOException {
 		if (mapping == null) {
 			mapping = createMapping();
 		}
-		Type type = Type.of(input.readByte());
+		Datatype type = Datatype.of(input.readByte());
 		return ((DatumReader) mapping.get(type)).read(input);
 	}
 	
-	abstract Datum read(DataInput input) throws IOException;
+	abstract Element read(DataInput input) throws IOException;
 
 	private static class IntTypeReader extends DatumReader {
-		Datum read(DataInput input) throws IOException {
-			return Datum.of(input.readInt());
+		Element read(DataInput input) throws IOException {
+			return Element.of(input.readInt());
 		}
 	}
 
 	private static class LongTypeReader extends DatumReader {
-		Datum read(DataInput input) throws IOException {
-			return Datum.of(input.readLong());
+		Element read(DataInput input) throws IOException {
+			return Element.of(input.readLong());
 		}
 	}
 
 	private static class StringTypeReader extends DatumReader {
-		Datum read(DataInput input) throws IOException {
-			return Datum.of(input.readUTF());
+		Element read(DataInput input) throws IOException {
+			return Element.of(input.readUTF());
 		}
 	}
 
 	private static class DateTypeReader extends DatumReader {
-		Datum read(DataInput input) throws IOException {
-			return Datum.of(new Date(input.readLong()));
+		Element read(DataInput input) throws IOException {
+			return Element.of(new Date(input.readLong()));
 		}
 	}
 
 	private static class BoolTypeReader extends DatumReader {
-		Datum read(DataInput input) throws IOException {
-			return Datum.of(input.readBoolean());
+		Element read(DataInput input) throws IOException {
+			return Element.of(input.readBoolean());
 		}
 	}
 
 	private static Hashtable createMapping() {
 		Hashtable mapping = new Hashtable(5);
-		mapping.put(Type.INT, new IntTypeReader());
-		mapping.put(Type.LONG, new LongTypeReader());
-		mapping.put(Type.STRING, new StringTypeReader());
-		mapping.put(Type.DATE, new DateTypeReader());
-		mapping.put(Type.BOOL, new BoolTypeReader());
+		mapping.put(Datatype.INT, new IntTypeReader());
+		mapping.put(Datatype.LONG, new LongTypeReader());
+		mapping.put(Datatype.STRING, new StringTypeReader());
+		mapping.put(Datatype.DATE, new DateTypeReader());
+		mapping.put(Datatype.BOOL, new BoolTypeReader());
 
 		return mapping;
 	}
