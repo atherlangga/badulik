@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.*;
 
 abstract class DatumReader {
+	private static Hashtable mapping;
+	
 	static Datum readFrom(byte[] rawData) throws IOException {
 		ByteArrayInputStream source = new ByteArrayInputStream(rawData);
 		DataInputStream input = new DataInputStream(source);
@@ -18,8 +20,11 @@ abstract class DatumReader {
 	}
 	
 	static Datum readFrom(DataInput input) throws IOException {
+		if (mapping == null) {
+			mapping = createMapping();
+		}
 		Type type = Type.of(input.readByte());
-		return ((DatumReader) MAPPING.get(type)).read(input);
+		return ((DatumReader) mapping.get(type)).read(input);
 	}
 	
 	abstract Datum read(DataInput input) throws IOException;
@@ -54,9 +59,8 @@ abstract class DatumReader {
 		}
 	}
 
-	private static Hashtable MAPPING = mapping();
-	private static Hashtable mapping() {
-		Hashtable mapping = new Hashtable();
+	private static Hashtable createMapping() {
+		Hashtable mapping = new Hashtable(5);
 		mapping.put(Type.INT, new IntTypeReader());
 		mapping.put(Type.LONG, new LongTypeReader());
 		mapping.put(Type.STRING, new StringTypeReader());

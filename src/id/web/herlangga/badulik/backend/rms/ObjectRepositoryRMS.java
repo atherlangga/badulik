@@ -227,7 +227,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
 
-		DatumWriter.forDatum(datum).writeTo(wrapper, datum);
+		DatumWriter.for_(datum.type()).writeTo(wrapper, datum);
 		byte[] rawData = writer.toByteArray();
 
 		writer.close();

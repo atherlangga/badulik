@@ -6,17 +6,21 @@ import java.io.*;
 import java.util.*;
 
 abstract class DatumWriter {
+	private static Hashtable mapping;
 	abstract void writeTo(DataOutput destination, Datum datum)
 			throws IOException;
 
+	static DatumWriter for_(Type type) {
+		if (mapping == null) {
+			mapping = createMapping();
+		}
+		return (DatumWriter) mapping.get(type);
+	}
+	
 	protected void writeTypeMarkerTo(DataOutput destination, Datum datum)
 			throws IOException {
 		byte typeMarker = datum.type().typeAsByte();
 		destination.writeByte(typeMarker);
-	}
-
-	static DatumWriter forDatum(Datum datum) {
-		return (DatumWriter) valueWriterMapping().get(datum.type());
 	}
 
 	static class IntWriter extends DatumWriter {
@@ -59,14 +63,14 @@ abstract class DatumWriter {
 		}
 	}
 	
-	private static Hashtable valueWriterMapping() {
-		Hashtable valueWriterMapping = new Hashtable();
-		valueWriterMapping.put(Type.INT, new IntWriter());
-		valueWriterMapping.put(Type.LONG, new LongWriter());
-		valueWriterMapping.put(Type.STRING, new StringWriter());
-		valueWriterMapping.put(Type.DATE, new DateWriter());
-		valueWriterMapping.put(Type.BOOL, new BoolWriter());
+	private static Hashtable createMapping() {
+		Hashtable mapping = new Hashtable(5);
+		mapping.put(Type.INT, new IntWriter());
+		mapping.put(Type.LONG, new LongWriter());
+		mapping.put(Type.STRING, new StringWriter());
+		mapping.put(Type.DATE, new DateWriter());
+		mapping.put(Type.BOOL, new BoolWriter());
 		
-		return valueWriterMapping;
+		return mapping;
 	}
 }
