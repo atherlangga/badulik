@@ -1,14 +1,14 @@
 package id.web.herlangga.badulik.definition;
 
-class Field {
+class Attribute {
 	private final String name;
 	private final Datatype type;
 	
-	static Field of(String name, Datatype type) {
-		return new Field(name, type);
+	static Attribute of(String name, Datatype type) {
+		return new Attribute(name, type);
 	}
 	
-	private Field(String name, Datatype type) {
+	private Attribute(String name, Datatype type) {
 		this.name = name;
 		this.type = type;
 	}
@@ -49,7 +49,7 @@ class Field {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		Field other = (Field) obj;
+		Attribute other = (Attribute) obj;
 		if (name == null) {
 			if (other.name != null) {
 				return false;

@@ -3,46 +3,46 @@ package id.web.herlangga.badulik.definition;
 import java.util.*;
 
 /**
- * Object state definition.
+ * Object definition.
  * 
  * @author angga
  * 
  */
 public class Schema {
-	private final Field[] fields;
+	private final Attribute[] attributes;
 
-	private Schema(Field[] fields) {
-		this.fields = fields;
+	private Schema(Attribute[] attributes) {
+		this.attributes = attributes;
 	}
 
 	public static SchemaBuilder buildNew() {
 		return new SchemaBuilder();
 	}
-	
-	public String fieldNameOf(int fieldNumber) {
-		return fields[fieldNumber].name();
+
+	public String attributeNameAt(int attributeNumber) {
+		return attributes[attributeNumber].name();
 	}
-	
-	public int fieldsSize() {
-		return fields.length;
+
+	public int attributesSize() {
+		return attributes.length;
 	}
-	
-	public boolean hasSameSizeWith(Element[] elements) {
-		return fields.length == elements.length;
+
+	private boolean hasSameSizeWith(Element[] elements) {
+		return attributes.length == elements.length;
 	}
-	
-	public boolean hasDifferentSizeWith(Element[] elements) {
+
+	private boolean hasDifferentSizeWith(Element[] elements) {
 		return !hasSameSizeWith(elements);
 	}
-	
+
 	public boolean isCompatibleWith(Element[] elements) {
-		if (!hasSameSizeWith(elements)) {
+		if (hasDifferentSizeWith(elements)) {
 			return false;
 		}
-		
+
 		int dataLength = elements.length;
 		for (int i = 0; i < dataLength; i++) {
-			if (fields[i].isIncompatibleWith(elements[i])) {
+			if (attributes[i].isIncompatibleWith(elements[i])) {
 				return false;
 			}
 		}
@@ -53,30 +53,30 @@ public class Schema {
 	public boolean isIncompatibleWith(Element[] data) {
 		return !isCompatibleWith(data);
 	}
-	
-	int fieldNumberOf(String fieldName) {
-		int fieldLength = fields.length;
+
+	int attributeNumberOf(String attributeName) {
+		int fieldLength = attributes.length;
 		for (int fieldNumber = 0; fieldNumber < fieldLength; fieldNumber++) {
-			Field currentField = fields[fieldNumber];
-			if (currentField.name().equals(fieldName)) {
+			Attribute currentField = attributes[fieldNumber];
+			if (currentField.name().equals(attributeName)) {
 				return fieldNumber;
 			}
 		}
-		
-		throw new IllegalArgumentException(fieldName + " is not exist.");
+
+		throw new IllegalArgumentException(attributeName + " is not exist.");
 	}
-	
-	Field fieldOf(String fieldName) {
-		return fields[fieldNumberOf(fieldName)];
+
+	Attribute attributeOf(String attributeName) {
+		return attributes[attributeNumberOf(attributeName)];
 	}
 
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Schema.hashCode(fields);
+		result = prime * result + Schema.hashCode(attributes);
 		return result;
 	}
-	
+
 	private static int hashCode(Object[] array) {
 		int prime = 31;
 		if (array == null) {
@@ -101,9 +101,9 @@ public class Schema {
 			return false;
 		}
 		Schema other = (Schema) obj;
-		int fieldsLength = fields.length;
+		int fieldsLength = attributes.length;
 		for (int i = 0; i < fieldsLength; i++) {
-			if (!fields[i].equals(other.fields[i])) {
+			if (!attributes[i].equals(other.attributes[i])) {
 				return false;
 			}
 		}
@@ -111,25 +111,34 @@ public class Schema {
 	}
 
 	public static class SchemaBuilder {
-		private Vector proposedFields;
+		private Vector names;
+		private Vector types;
 
 		private SchemaBuilder() {
-			this.proposedFields = new Vector();
+			this.names = new Vector();
+			this.types = new Vector();
 		}
 
-		public SchemaBuilder withField(String fieldName, Datatype fieldType) {
-			Field field = Field.of(fieldName, fieldType);
-			if (proposedFields.contains(field)) {
-				throw new IllegalArgumentException(
-						"Specified field already exists");
+		public SchemaBuilder thenAddAttribute(String attributeName,
+				Datatype attributeType) {
+			if (names.contains(attributeName)) {
+				throw new IllegalArgumentException(attributeName
+						+ "already exists.");
 			}
-			proposedFields.addElement(field);
+			names.addElement(attributeName);
+			types.addElement(attributeType);
 			return this;
 		}
 
 		public Schema thenGetResult() {
-			Field[] fields = new Field[proposedFields.size()];
-			proposedFields.copyInto(fields);
+			int attributesSize = names.size();
+			Attribute[] fields = new Attribute[attributesSize];
+			for (int i = 0; i < attributesSize; i++) {
+				String attributeName = (String) names.elementAt(i);
+				Datatype attributeType = (Datatype) types.elementAt(i);
+
+				fields[i] = Attribute.of(attributeName, attributeType);
+			}
 
 			return new Schema(fields);
 		}
