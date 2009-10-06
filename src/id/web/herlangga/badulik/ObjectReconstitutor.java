@@ -17,7 +17,7 @@ public interface ObjectReconstitutor {
 	 * @param objecId
 	 *            Object ID.
 	 * @param state
-	 *            Array of {@link Element} to represents Object state.
+	 *            {@link Tuple} to represents Object state.
 	 * @return reconstituted Object.
 	 */
 	public Object reconstituteObjectWith(Element objecId, Tuple state);
