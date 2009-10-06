@@ -23,7 +23,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 	public Object find(Element objectId, ObjectReconstitutor reconstitutor) {
 		if (!isExist(objectId)) {
-			throw new IllegalArgumentException("Object ID is not exist");
+			throw new IllegalArgumentException("Object ID is not exist.");
 		}
 		try {
 			Tuple state = getPersistedState(objectId);
@@ -41,6 +41,25 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 		throw new RuntimeException();
 	}
 
+	public Object[] findAll(ObjectFilter filter,
+			ObjectReconstitutor reconstitutor) {
+		Vector matchesObjects = new Vector();
+
+		Element[] objectIds = fetchAllIds();
+		int totalStoredObjects = objectIds.length;
+		for (int i = 0; i < totalStoredObjects; i++) {
+			Object toCheck = find(objectIds[i], reconstitutor);
+			if (filter.matches(toCheck)) {
+				matchesObjects.addElement(toCheck);
+			}
+		}
+
+		Object[] result = new Object[matchesObjects.size()];
+		matchesObjects.copyInto(result);
+
+		return result;
+	}
+
 	public void save(Object object, ObjectIdExtractor idExtractor,
 			ObjectStateExtractor stateExtractor) {
 		Element objectId = idExtractor.extractIdFrom(object);
@@ -48,7 +67,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 		if (!objectSchema.equals(state.schema())) {
 			throw new IllegalArgumentException("Structure "
-					+ "and extracted Object state are not equals");
+					+ "and extracted Object state are not equals.");
 		}
 
 		try {
@@ -110,7 +129,7 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	public long generateSequenceValue() {
 		try {
 			return RecordStoresGateway.recordStoreFor(
-					objectStateRecordStoreName).getNextRecordID();
+					objectIdRecordStoreName).getNextRecordID();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {
@@ -161,14 +180,14 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 	}
 
 	private Tuple generateStateFrom(byte[] rawData) throws IOException {
-		int fieldSize = objectSchema.fieldsSize();
+		int fieldSize = objectSchema.attributesSize();
 		TupleBuilder tupleBuilder = Tuple.buildNew().withSchema(objectSchema);
 
 		ByteArrayInputStream reader = new ByteArrayInputStream(rawData);
 		DataInputStream wrapper = new DataInputStream(reader);
 		for (int i = 0; i < fieldSize; i++) {
 			Element element = ElementReader.readFrom(wrapper);
-			tupleBuilder.thenAddColumn(objectSchema.fieldNameOf(i), element);
+			tupleBuilder.thenAddField(objectSchema.attributeNameAt(i), element);
 		}
 		reader.close();
 		wrapper.close();

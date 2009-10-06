@@ -17,10 +17,23 @@ public interface ObjectRepository {
 	 *            Object ID represented as {@link Element}.
 	 * @param reconstitutor
 	 *            {@link ObjectReconstitutor} to be delegated the job of the
-	 *            object reconstitution.
+	 *            Object reconstitution.
 	 * @return Object with specified ID.
 	 */
 	public Object find(Element objectId, ObjectReconstitutor reconstitutor);
+
+	/**
+	 * Find several Objects matches with filter.
+	 * 
+	 * @param filter
+	 *            {@link ObjectFilter} to filter all Objects collections.
+	 * @param reconstitutor
+	 *            {@link ObjectReconstitutor} to be delegated the job of Object
+	 *            reconstitution.
+	 * @return Objects that matches with filter.
+	 */
+	public Object[] findAll(ObjectFilter filter,
+			ObjectReconstitutor reconstitutor);
 
 	/**
 	 * Store object. Based on the extracted object ID, {@link ObjectRepository}
