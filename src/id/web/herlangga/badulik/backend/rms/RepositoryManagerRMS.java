@@ -16,7 +16,8 @@ public class RepositoryManagerRMS implements RepositoryManager {
 	}
 
 	public void drop(String name) {
-		RecordStoresGateway.deleteRecordStore(name);
+		RecordStoresGateway.deleteRecordStore(name + ID_SUFFIX);
+		RecordStoresGateway.deleteRecordStore(name + STATE_SUFFIX);
 	}
 
 }
