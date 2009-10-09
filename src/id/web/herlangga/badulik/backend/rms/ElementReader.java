@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 
 abstract class ElementReader {
-	private static Hashtable mapping;
+	private static Hashtable mapping = createMapping();
 	
 	static Element readFrom(byte[] rawData) throws IOException {
 		ByteArrayInputStream source = new ByteArrayInputStream(rawData);
@@ -20,9 +20,6 @@ abstract class ElementReader {
 	}
 	
 	static Element readFrom(DataInput input) throws IOException {
-		if (mapping == null) {
-			mapping = createMapping();
-		}
 		Datatype type = Datatype.of(input.readByte());
 		return ((ElementReader) mapping.get(type)).read(input);
 	}

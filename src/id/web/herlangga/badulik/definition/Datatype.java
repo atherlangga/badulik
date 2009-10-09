@@ -9,7 +9,6 @@ import java.util.*;
  * 
  */
 public class Datatype {
-	private static Hashtable mapping;
 	private final byte type;
 
 	private Datatype(byte type) {
@@ -17,9 +16,6 @@ public class Datatype {
 	}
 
 	public static Datatype of(byte type) {
-		if (mapping == null) {
-			mapping = createMapping();
-		}
 		return (Datatype) mapping.get(new Byte(type));
 	}
 
@@ -27,17 +23,7 @@ public class Datatype {
 		return type;
 	}
 	
-	private static final Hashtable createMapping() {
-		Hashtable mapping = new Hashtable();
-		mapping.put(new Byte((byte) 1), INT);
-		mapping.put(new Byte((byte) 2), LONG);
-		mapping.put(new Byte((byte) 3), STRING);
-		mapping.put(new Byte((byte) 4), DATE);
-		mapping.put(new Byte((byte) 5), BOOL);
-		
-		return mapping;
-	}
-
+	
 	public static final Datatype INT = new Datatype((byte) 1) {
 		public String toString() {
 			return "Int";
@@ -63,5 +49,17 @@ public class Datatype {
 			return "Bool";
 		}
 	};
+
+	private static Hashtable mapping = createMapping();
+	private static final Hashtable createMapping() {
+		Hashtable mapping = new Hashtable();
+		mapping.put(new Byte((byte) 1), INT);
+		mapping.put(new Byte((byte) 2), LONG);
+		mapping.put(new Byte((byte) 3), STRING);
+		mapping.put(new Byte((byte) 4), DATE);
+		mapping.put(new Byte((byte) 5), BOOL);
+		
+		return mapping;
+	}
 
 }

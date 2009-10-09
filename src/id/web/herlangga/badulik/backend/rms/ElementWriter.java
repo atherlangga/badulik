@@ -6,14 +6,11 @@ import java.io.*;
 import java.util.*;
 
 abstract class ElementWriter {
-	private static Hashtable mapping;
+	private static Hashtable mapping = createMapping();
 	abstract void writeTo(DataOutput destination, Element datum)
 			throws IOException;
 
 	static ElementWriter for_(Datatype type) {
-		if (mapping == null) {
-			mapping = createMapping();
-		}
 		return (ElementWriter) mapping.get(type);
 	}
 	
