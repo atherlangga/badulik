@@ -9,12 +9,12 @@ import java.util.*;
 
 import javax.microedition.rms.*;
 
-public class ObjectRepositoryRMS implements ObjectRepository {
+public class RMSRepository implements ObjectRepository {
 	private final String objectIdRecordStoreName;
 	private final String objectStateRecordStoreName;
 	private final Schema objectSchema;
 
-	ObjectRepositoryRMS(String objectIdRecordStoreName,
+	RMSRepository(String objectIdRecordStoreName,
 			String objectStateRecordStoreName, Schema objectSchema) {
 		this.objectIdRecordStoreName = objectIdRecordStoreName;
 		this.objectStateRecordStoreName = objectStateRecordStoreName;
@@ -128,8 +128,8 @@ public class ObjectRepositoryRMS implements ObjectRepository {
 
 	public long generateSequenceValue() {
 		try {
-			return RecordStoresGateway.recordStoreFor(
-					objectIdRecordStoreName).getNextRecordID();
+			return RecordStoresGateway.recordStoreFor(objectIdRecordStoreName)
+					.getNextRecordID();
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (RecordStoreException e) {

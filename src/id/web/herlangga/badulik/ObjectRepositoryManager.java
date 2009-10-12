@@ -3,12 +3,12 @@ package id.web.herlangga.badulik;
 import id.web.herlangga.badulik.definition.Schema;
 
 /**
- * {@link ObjectRepository} manager.
+ * Manages lifetime of several {@link ObjectRepository}s.
  * 
  * @author angga
  * 
  */
-public interface RepositoryManager {
+public interface ObjectRepositoryManager {
 
 	/**
 	 * Get {@link ObjectRepository} given unique name identifier and the Object

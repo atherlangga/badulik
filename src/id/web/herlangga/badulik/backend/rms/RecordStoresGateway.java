@@ -5,7 +5,9 @@ import java.util.Hashtable;
 import javax.microedition.rms.*;
 
 /**
- * Provides functionality to manage {@link RecordStore}.
+ * Provides functionality to manage {@link RecordStore}. All access to
+ * {@link RecordStore} from this package <b>must</b> be made from this class.
+ * </p>
  * 
  * @author angga
  * 
@@ -14,7 +16,11 @@ final class RecordStoresGateway {
 	private static Hashtable recordStores = new Hashtable();
 
 	/**
-	 * Retrieve {@link RecordStore} with some name.
+	 * Retrieve {@link RecordStore} with specified name. </p>
+	 * 
+	 * Do <b>NOT</b> hold the reference of {@link RecordStore} provided by this
+	 * method. Instead, call this method for every operation that needs
+	 * {@link RecordStore}. </p>
 	 * 
 	 * @param repositoryName
 	 *            name of the {@link RecordStore} to retrieve.
@@ -51,7 +57,7 @@ final class RecordStoresGateway {
 	 * Check whether specified {@link RecordStore} is exist.
 	 * 
 	 * @param name
-	 *            name to be checked.
+	 *            {@link RecordStore} name to check.
 	 * @return <code>true</code> if {@link RecordStore} with specified name is
 	 *         not exist, else <code>false</code>.
 	 */
@@ -84,7 +90,7 @@ final class RecordStoresGateway {
 		} catch (RecordStoreException e) {
 			e.printStackTrace();
 		}
-		
+
 		throw new IllegalStateException();
 	}
 

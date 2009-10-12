@@ -3,15 +3,12 @@ package id.web.herlangga.badulik.backend.rms;
 import id.web.herlangga.badulik.*;
 import id.web.herlangga.badulik.definition.*;
 
-public class RepositoryManagerRMS implements RepositoryManager {
-	private static final String ID_SUFFIX = "Id";
-	private static final String STATE_SUFFIX = "State";
-
+public class RMSRepositoryManager implements ObjectRepositoryManager {
 	public ObjectRepository get(String name, Schema objectSchema) {
 		String objectIdRecordStoreName = name + ID_SUFFIX;
 		String objectStateRecordStoreName = name + STATE_SUFFIX;
 
-		return new ObjectRepositoryRMS(objectIdRecordStoreName,
+		return new RMSRepository(objectIdRecordStoreName,
 				objectStateRecordStoreName, objectSchema);
 	}
 
@@ -20,4 +17,6 @@ public class RepositoryManagerRMS implements RepositoryManager {
 		RecordStoresGateway.deleteRecordStore(name + STATE_SUFFIX);
 	}
 
+	private static final String ID_SUFFIX = "Id";
+	private static final String STATE_SUFFIX = "State";
 }
