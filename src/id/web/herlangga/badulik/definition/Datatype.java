@@ -16,13 +16,12 @@ public class Datatype {
 	}
 
 	public static Datatype of(byte type) {
-		return (Datatype) mapping.get(new Byte(type));
+		return (Datatype) MAPPING.get(new Byte(type));
 	}
 
 	public byte typeAsByte() {
 		return type;
 	}
-	
 	
 	public static final Datatype INT = new Datatype((byte) 1) {
 		public String toString() {
@@ -50,8 +49,8 @@ public class Datatype {
 		}
 	};
 
-	private static Hashtable mapping = createMapping();
-	private static final Hashtable createMapping() {
+	private static final Hashtable MAPPING = createMapping();
+	private static Hashtable createMapping() {
 		Hashtable mapping = new Hashtable();
 		mapping.put(new Byte((byte) 1), INT);
 		mapping.put(new Byte((byte) 2), LONG);
