@@ -70,15 +70,15 @@ public interface ObjectRepository {
 	/**
 	 * Find and return all Object IDs exist in the storage.
 	 * 
-	 * @return array of long contains object IDs.
+	 * @return array of long contains Object IDs.
 	 */
 	public Element[] fetchAllIds();
 
 	/**
-	 * Generate valid sequence value. It's intended helping to create Object ID.
+	 * Generate valid sequence value. It's intended to help creating Object ID.
 	 * 
 	 * @return sequence value represented as long.
 	 */
-	public long generateSequenceValue();
+	public long nextSequenceNumber();
 
 }

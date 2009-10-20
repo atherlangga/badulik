@@ -126,7 +126,7 @@ public class RMSRepository implements ObjectRepository {
 		return result;
 	}
 
-	public long generateSequenceValue() {
+	public long nextSequenceNumber() {
 		try {
 			return RecordStoresGateway.recordStoreFor(objectIdRecordStoreName)
 					.getNextRecordID();
