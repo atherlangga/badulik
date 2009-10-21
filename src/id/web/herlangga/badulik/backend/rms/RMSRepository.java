@@ -62,7 +62,7 @@ public class RMSRepository implements ObjectRepository {
 
 	public void save(Object object, ObjectIdExtractor idExtractor,
 			ObjectStateExtractor stateExtractor) {
-		Element objectId = idExtractor.extractIdFrom(object);
+		Element objectId = idExtractor.extractId(object);
 		Tuple state = stateExtractor.extractStateFrom(object);
 
 		if (!objectSchema.equals(state.schema())) {

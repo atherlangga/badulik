@@ -19,5 +19,5 @@ public interface ObjectIdExtractor {
 	 *            Object to extract ID from.
 	 * @return extracted Object ID.
 	 */
-	public Element extractIdFrom(Object toExtract);
+	public Element extractId(Object toExtract);
 }
