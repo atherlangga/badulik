@@ -27,7 +27,7 @@ public class RMSRepository implements ObjectRepository {
 		}
 		try {
 			Tuple state = getPersistedState(objectId);
-			return reconstitutor.reconstituteObjectWith(objectId, state);
+			return reconstitutor.reconstituteObject(objectId, state);
 		} catch (RecordStoreNotOpenException e) {
 			e.printStackTrace();
 		} catch (InvalidRecordIDException e) {
