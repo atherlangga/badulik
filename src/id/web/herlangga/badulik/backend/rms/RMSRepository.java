@@ -63,7 +63,7 @@ public class RMSRepository implements ObjectRepository {
 	public void save(Object object, ObjectIdExtractor idExtractor,
 			ObjectStateExtractor stateExtractor) {
 		Element objectId = idExtractor.extractId(object);
-		Tuple state = stateExtractor.extractStateFrom(object);
+		Tuple state = stateExtractor.extractState(object);
 
 		if (!objectSchema.equals(state.schema())) {
 			throw new IllegalArgumentException("Structure "
