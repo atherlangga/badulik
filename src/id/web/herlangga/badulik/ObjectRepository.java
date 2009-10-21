@@ -65,7 +65,7 @@ public interface ObjectRepository {
 	 * @return <code>true</code> if specified Object ID exist, else
 	 *         <code>false</code>.
 	 */
-	public boolean isExist(Element objectId);
+	public boolean contains(Element objectId);
 
 	/**
 	 * Find and return all Object IDs exist in the storage.

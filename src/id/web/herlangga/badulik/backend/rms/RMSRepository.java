@@ -22,7 +22,7 @@ public class RMSRepository implements ObjectRepository {
 	}
 
 	public Object find(Element objectId, ObjectReconstitutor reconstitutor) {
-		if (!isExist(objectId)) {
+		if (!contains(objectId)) {
 			throw new IllegalArgumentException("Object ID is not exist.");
 		}
 		try {
@@ -72,7 +72,7 @@ public class RMSRepository implements ObjectRepository {
 
 		try {
 			byte[] stateRawData = generateRawDataFrom(state);
-			if (isExist(objectId)) {
+			if (contains(objectId)) {
 				editExisting(objectId, stateRawData);
 			} else {
 				byte[] objectIdRawData = generateRawDataFrom(objectId);
@@ -107,7 +107,7 @@ public class RMSRepository implements ObjectRepository {
 		}
 	}
 
-	public boolean isExist(Element objectId) {
+	public boolean contains(Element objectId) {
 		RecordFilter objectIdFilter = new ObjectIdFilter(objectId);
 		boolean result = false;
 

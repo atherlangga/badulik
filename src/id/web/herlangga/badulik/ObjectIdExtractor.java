@@ -3,7 +3,8 @@ package id.web.herlangga.badulik;
 import id.web.herlangga.badulik.definition.*;
 
 /**
- * Object ID extractor to help {@link ObjectRepository} persisting Object.
+ * Object ID extractor to help {@link ObjectRepository} extract Object ID of
+ * certain Object in order to persist Object in question.
  * 
  * @author angga
  * 
@@ -12,7 +13,7 @@ public interface ObjectIdExtractor {
 
 	/**
 	 * Extract ID from specified Object so {@link ObjectRepository} can differ
-	 * one Object over another.
+	 * one Object from another.
 	 * 
 	 * @param toExtract
 	 *            Object to extract ID from.

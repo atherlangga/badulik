@@ -3,8 +3,8 @@ package id.web.herlangga.badulik;
 import id.web.herlangga.badulik.definition.*;
 
 /**
- * Object reconstitutor for helping {@link ObjectRepository} reconstitute
- * Object.
+ * Object reconstitutor to reconstitute saved Object in the
+ * {@link ObjectRepository}.
  * 
  * @author angga
  * 
@@ -14,11 +14,11 @@ public interface ObjectReconstitutor {
 	/**
 	 * Reconstitute object with specified data.
 	 * 
-	 * @param objecId
+	 * @param objectId
 	 *            Object ID.
 	 * @param state
 	 *            {@link Tuple} to represents Object state.
 	 * @return reconstituted Object.
 	 */
-	public Object reconstituteObjectWith(Element objecId, Tuple state);
+	public Object reconstituteObjectWith(Element objectId, Tuple state);
 }
