@@ -1,7 +1,7 @@
 package id.web.herlangga.badulik;
 
 /**
- * {@link ObjectFilter} to help {@link ObjectRepository} to filter its
+ * {@link ObjectFilter} to help {@link ObjectStorage} filter its
  * collections.
  * 
  * @author angga

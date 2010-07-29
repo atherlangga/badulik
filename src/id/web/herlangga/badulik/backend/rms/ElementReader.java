@@ -6,24 +6,28 @@ import java.io.*;
 import java.util.*;
 
 abstract class ElementReader {
-	private static Hashtable mapping = createMapping();
-	
+	private static final Hashtable MAPPING = createMapping();
+
 	static Element readFrom(byte[] rawData) throws IOException {
 		ByteArrayInputStream source = new ByteArrayInputStream(rawData);
 		DataInputStream input = new DataInputStream(source);
-		
+
 		Element result = readFrom(input);
 		input.close();
 		source.close();
-		
+
 		return result;
 	}
-	
+
 	static Element readFrom(DataInput input) throws IOException {
-		Datatype type = Datatype.of(input.readByte());
-		return ((ElementReader) mapping.get(type)).read(input);
+		Datatype type = readTypeMarkerFrom(input);
+		return ((ElementReader) MAPPING.get(type)).read(input);
 	}
-	
+
+	private static Datatype readTypeMarkerFrom(DataInput input) throws IOException {
+		return Datatype.of(input.readByte());
+	}
+
 	abstract Element read(DataInput input) throws IOException;
 
 	private static class IntReader extends ElementReader {

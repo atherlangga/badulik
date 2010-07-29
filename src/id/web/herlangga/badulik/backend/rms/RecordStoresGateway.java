@@ -6,20 +6,20 @@ import javax.microedition.rms.*;
 
 /**
  * Provides functionality to manage {@link RecordStore}. All access to
- * {@link RecordStore} from this package <b>must</b> be made from this class.
+ * {@link RecordStore} from this package <b>must</b> be made from this Object.
  * </p>
  * 
  * @author angga
  * 
  */
-final class RecordStoresGateway {
-	private static Hashtable recordStores = new Hashtable();
+class RecordStoresGateway {
+	private static final Hashtable recordStores = new Hashtable();
 
 	/**
 	 * Retrieve {@link RecordStore} with specified name. </p>
 	 * 
-	 * Do <b>NOT</b> hold the reference of {@link RecordStore} provided by this
-	 * method. Instead, call this method for every operation that needs
+	 * Do <b>not</b> hold the reference of {@link RecordStore} provided by this
+	 * method. Call this method every time an operation needs
 	 * {@link RecordStore}. </p>
 	 * 
 	 * @param repositoryName

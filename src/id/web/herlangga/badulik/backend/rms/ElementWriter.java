@@ -6,60 +6,61 @@ import java.io.*;
 import java.util.*;
 
 abstract class ElementWriter {
-	private static Hashtable mapping = createMapping();
-	abstract void writeTo(DataOutput destination, Element datum)
-			throws IOException;
+	private static final Hashtable MAPPING = createMapping();
 
-	static ElementWriter for_(Datatype type) {
-		return (ElementWriter) mapping.get(type);
+	static ElementWriter of(Datatype type) {
+		return (ElementWriter) MAPPING.get(type);
 	}
-	
-	protected void writeTypeMarkerTo(DataOutput destination, Element datum)
+
+	protected void writeTypeMarker(Element datum, DataOutput destination)
 			throws IOException {
 		byte typeMarker = datum.type().typeAsByte();
 		destination.writeByte(typeMarker);
 	}
 
+	abstract void write(Element datum, DataOutput destination)
+			throws IOException;
+
 	static class IntWriter extends ElementWriter {
-		void writeTo(DataOutput destination, Element datum) throws IOException {
-			writeTypeMarkerTo(destination, datum);
+		void write(Element datum, DataOutput destination) throws IOException {
+			writeTypeMarker(datum, destination);
 			int value = ((Integer) datum.value()).intValue();
 			destination.writeInt(value);
 		}
 	}
 
 	static class LongWriter extends ElementWriter {
-		void writeTo(DataOutput destination, Element datum) throws IOException {
-			writeTypeMarkerTo(destination, datum);
+		void write(Element datum, DataOutput destination) throws IOException {
+			writeTypeMarker(datum, destination);
 			long value = ((Long) datum.value()).longValue();
 			destination.writeLong(value);
 		}
 	}
 
 	static class StringWriter extends ElementWriter {
-		void writeTo(DataOutput destination, Element datum) throws IOException {
-			writeTypeMarkerTo(destination, datum);
+		void write(Element datum, DataOutput destination) throws IOException {
+			writeTypeMarker(datum, destination);
 			String value = (String) datum.value();
 			destination.writeUTF(value);
 		}
 	}
 
 	static class DateWriter extends ElementWriter {
-		void writeTo(DataOutput destination, Element datum) throws IOException {
-			writeTypeMarkerTo(destination, datum);
+		void write(Element datum, DataOutput destination) throws IOException {
+			writeTypeMarker(datum, destination);
 			long dateValue = ((Date) datum.value()).getTime();
 			destination.writeLong(dateValue);
 		}
 	}
 
 	static class BoolWriter extends ElementWriter {
-		void writeTo(DataOutput destination, Element datum) throws IOException {
-			writeTypeMarkerTo(destination, datum);
+		void write(Element datum, DataOutput destination) throws IOException {
+			writeTypeMarker(datum, destination);
 			boolean value = ((Boolean) datum.value()).booleanValue();
 			destination.writeBoolean(value);
 		}
 	}
-	
+
 	private static Hashtable createMapping() {
 		Hashtable mapping = new Hashtable(5);
 		mapping.put(Datatype.INT, new IntWriter());
@@ -67,7 +68,7 @@ abstract class ElementWriter {
 		mapping.put(Datatype.STRING, new StringWriter());
 		mapping.put(Datatype.DATE, new DateWriter());
 		mapping.put(Datatype.BOOL, new BoolWriter());
-		
+
 		return mapping;
 	}
 }

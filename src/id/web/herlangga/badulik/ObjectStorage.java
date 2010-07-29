@@ -3,12 +3,16 @@ package id.web.herlangga.badulik;
 import id.web.herlangga.badulik.definition.Element;
 
 /**
- * Object repository.
+ * Object storage.
+ * 
+ * This object is the main object of this library. It used to store and retrieve
+ * objects of certain type. For retrieval process, one can define certain
+ * criteria to find object(s) that he/she wants.
  * 
  * @author angga
  * 
  */
-public interface ObjectRepository {
+public interface ObjectStorage {
 
 	/**
 	 * Find Object with specified ID.
@@ -36,7 +40,7 @@ public interface ObjectRepository {
 			ObjectReconstitutor reconstitutor);
 
 	/**
-	 * Store object. Based on the extracted object ID, {@link ObjectRepository}
+	 * Store object. Based on the extracted object ID, {@link ObjectStorage}
 	 * will make decision whether to insert new record or edit existing record.
 	 * 
 	 * @param object

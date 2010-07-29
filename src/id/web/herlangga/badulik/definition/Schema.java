@@ -27,14 +27,6 @@ public class Schema {
 		return attributes.length;
 	}
 
-	private boolean hasSameSizeWith(Element[] elements) {
-		return attributes.length == elements.length;
-	}
-
-	private boolean hasDifferentSizeWith(Element[] elements) {
-		return !hasSameSizeWith(elements);
-	}
-
 	public boolean isCompatibleWith(Element[] elements) {
 		if (hasDifferentSizeWith(elements)) {
 			return false;
@@ -68,6 +60,14 @@ public class Schema {
 
 	Attribute attributeOf(String attributeName) {
 		return attributes[attributeNumberOf(attributeName)];
+	}
+
+	private boolean hasSameSizeWith(Element[] elements) {
+		return attributes.length == elements.length;
+	}
+
+	private boolean hasDifferentSizeWith(Element[] elements) {
+		return !hasSameSizeWith(elements);
 	}
 
 	public int hashCode() {
@@ -123,7 +123,7 @@ public class Schema {
 				Datatype attributeType) {
 			if (names.contains(attributeName)) {
 				throw new IllegalArgumentException(attributeName
-						+ "already exists.");
+						+ " already exists.");
 			}
 			names.addElement(attributeName);
 			types.addElement(attributeType);

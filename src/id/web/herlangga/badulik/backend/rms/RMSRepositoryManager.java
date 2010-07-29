@@ -3,8 +3,8 @@ package id.web.herlangga.badulik.backend.rms;
 import id.web.herlangga.badulik.*;
 import id.web.herlangga.badulik.definition.*;
 
-public class RMSRepositoryManager implements ObjectRepositoryManager {
-	public ObjectRepository get(String name, Schema objectSchema) {
+public class RMSRepositoryManager implements ObjectStorageManager {
+	public ObjectStorage get(String name, Schema objectSchema) {
 		String objectIdRecordStoreName = name + ID_SUFFIX;
 		String objectStateRecordStoreName = name + STATE_SUFFIX;
 

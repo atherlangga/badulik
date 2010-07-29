@@ -3,7 +3,7 @@ package id.web.herlangga.badulik;
 import id.web.herlangga.badulik.definition.*;
 
 /**
- * Object state extractor to assist {@link ObjectRepository} in order to
+ * Object state extractor to assist {@link ObjectStorage} in order to
  * persisting Object state.
  * 
  * @author angga
@@ -18,5 +18,5 @@ public interface ObjectStateExtractor {
 	 *            Object which state is about to be extracted.
 	 * @return extracted state data represented in {@link Tuple}.
 	 */
-	public Tuple extractState(Object toExtract);
+	public Tuple extractStateFrom(Object toExtract);
 }

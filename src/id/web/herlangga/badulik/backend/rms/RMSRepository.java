@@ -9,7 +9,7 @@ import java.util.*;
 
 import javax.microedition.rms.*;
 
-public class RMSRepository implements ObjectRepository {
+public class RMSRepository implements ObjectStorage {
 	private final String objectIdRecordStoreName;
 	private final String objectStateRecordStoreName;
 	private final Schema objectSchema;
@@ -62,8 +62,8 @@ public class RMSRepository implements ObjectRepository {
 
 	public void save(Object object, ObjectIdExtractor idExtractor,
 			ObjectStateExtractor stateExtractor) {
-		Element objectId = idExtractor.extractId(object);
-		Tuple state = stateExtractor.extractState(object);
+		Element objectId = idExtractor.extractIdFrom(object);
+		Tuple state = stateExtractor.extractStateFrom(object);
 
 		if (!objectSchema.equals(state.schema())) {
 			throw new IllegalArgumentException("Structure "
@@ -250,7 +250,7 @@ public class RMSRepository implements ObjectRepository {
 		ByteArrayOutputStream writer = new ByteArrayOutputStream();
 		DataOutputStream wrapper = new DataOutputStream(writer);
 
-		ElementWriter.for_(datum.type()).writeTo(wrapper, datum);
+		ElementWriter.of(datum.type()).write(datum, wrapper);
 		byte[] rawData = writer.toByteArray();
 
 		writer.close();

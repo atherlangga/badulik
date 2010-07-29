@@ -4,7 +4,7 @@ import id.web.herlangga.badulik.definition.*;
 
 /**
  * Object reconstitutor to reconstitute saved Object in the
- * {@link ObjectRepository}.
+ * {@link ObjectStorage}.
  * 
  * @author angga
  * 

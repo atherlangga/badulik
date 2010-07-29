@@ -6,15 +6,21 @@ import id.web.herlangga.badulik.*;
 import id.web.herlangga.badulik.definition.*;
 
 /**
- * Sometimes, in order to make impression that an {@link ObjectRepository} can
- * stores polymorphic object, we need several {@link ObjectRepository} to
- * support it. In that scenario, {@link RMSRepositoryGroupManager} will comes in
- * handy.
+ * In order to make impression that an {@link ObjectStorage} behave like
+ * in-memory {@link ObjectStorage} thus can stores polymorphic object, we
+ * need several {@link ObjectStorage} to support it. In such scenario,
+ * {@link RMSRepositoryGroupManager} will comes in handy. </p>
+ * 
+ * {@link RMSRepositoryGroupManager} will create several
+ * {@link ObjectStorage}s with name prefixed to achieve uniquely named
+ * {@link ObjectStorage}. Thus, it have two drop methods, a drop method to
+ * drop specific {@link ObjectStorage}, and a dropAll method to drop all
+ * {@link ObjectStorage}s created by this Object. </p>
  * 
  * @author angga
  * 
  */
-public class RMSRepositoryGroupManager implements ObjectRepositoryManager {
+public class RMSRepositoryGroupManager implements ObjectStorageManager {
 	private final String prefix;
 	private final RMSRepositoryManager repositoryManager;
 	private final Vector openedRepositoriesLog = new Vector();
@@ -25,9 +31,9 @@ public class RMSRepositoryGroupManager implements ObjectRepositoryManager {
 		this.repositoryManager = repositoryManager;
 	}
 
-	public ObjectRepository get(String name, Schema objectSchema) {
+	public ObjectStorage get(String name, Schema objectSchema) {
 		String repositoryName = prefix + name;
-		ObjectRepository repository = repositoryManager.get(repositoryName,
+		ObjectStorage repository = repositoryManager.get(repositoryName,
 				objectSchema);
 		appendToLog(repositoryName);
 
@@ -35,6 +41,15 @@ public class RMSRepositoryGroupManager implements ObjectRepositoryManager {
 	}
 
 	public void drop(String name) {
+		String completeRepositoryName = prefix + name;
+		repositoryManager.drop(completeRepositoryName);
+		openedRepositoriesLog.removeElement(completeRepositoryName);
+	}
+
+	/**
+	 * Drop all {@link ObjectStorage}s created by this Object.
+	 */
+	public void dropAll() {
 		dropRepositoryGroupBasedOnLog();
 		resetLog();
 	}

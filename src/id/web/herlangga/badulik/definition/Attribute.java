@@ -3,11 +3,11 @@ package id.web.herlangga.badulik.definition;
 class Attribute {
 	private final String name;
 	private final Datatype type;
-	
+
 	static Attribute of(String name, Datatype type) {
 		return new Attribute(name, type);
 	}
-	
+
 	private Attribute(String name, Datatype type) {
 		this.name = name;
 		this.type = type;
@@ -20,11 +20,11 @@ class Attribute {
 	Datatype type() {
 		return type;
 	}
-	
+
 	boolean isCompatibleWith(Element element) {
 		return type.equals(element.type());
 	}
-	
+
 	boolean isIncompatibleWith(Element element) {
 		return !isCompatibleWith(element);
 	}
@@ -32,10 +32,8 @@ class Attribute {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -66,5 +64,5 @@ class Attribute {
 		}
 		return true;
 	}
-	
+
 }

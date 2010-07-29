@@ -44,23 +44,23 @@ public class Element {
 	public Object value() {
 		return value;
 	}
-	
+
 	public int valueAsInt() {
 		return ((Integer) value).intValue();
 	}
-	
+
 	public long valueAsLong() {
 		return ((Long) value).longValue();
 	}
-	
+
 	public String valueAsString() {
 		return (String) value;
 	}
-	
+
 	public Date valueAsDate() {
 		return (Date) value;
 	}
-	
+
 	public boolean valueAsBoolean() {
 		return ((Boolean) value).booleanValue();
 	}

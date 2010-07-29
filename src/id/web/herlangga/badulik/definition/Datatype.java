@@ -22,7 +22,7 @@ public class Datatype {
 	public byte typeAsByte() {
 		return type;
 	}
-	
+
 	public static final Datatype INT = new Datatype((byte) 1) {
 		public String toString() {
 			return "Int";
@@ -50,6 +50,7 @@ public class Datatype {
 	};
 
 	private static final Hashtable MAPPING = createMapping();
+
 	private static Hashtable createMapping() {
 		Hashtable mapping = new Hashtable();
 		mapping.put(new Byte((byte) 1), INT);
@@ -57,7 +58,7 @@ public class Datatype {
 		mapping.put(new Byte((byte) 3), STRING);
 		mapping.put(new Byte((byte) 4), DATE);
 		mapping.put(new Byte((byte) 5), BOOL);
-		
+
 		return mapping;
 	}
 
