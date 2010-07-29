@@ -9,12 +9,12 @@ import java.util.*;
 
 import javax.microedition.rms.*;
 
-public class RMSRepository implements ObjectStorage {
+public class RMSStorage implements ObjectStorage {
 	private final String objectIdRecordStoreName;
 	private final String objectStateRecordStoreName;
 	private final Schema objectSchema;
 
-	RMSRepository(String objectIdRecordStoreName,
+	RMSStorage(String objectIdRecordStoreName,
 			String objectStateRecordStoreName, Schema objectSchema) {
 		this.objectIdRecordStoreName = objectIdRecordStoreName;
 		this.objectStateRecordStoreName = objectStateRecordStoreName;

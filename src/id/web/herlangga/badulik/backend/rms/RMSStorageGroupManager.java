@@ -9,9 +9,9 @@ import id.web.herlangga.badulik.definition.*;
  * In order to make impression that an {@link ObjectStorage} behave like
  * in-memory {@link ObjectStorage} thus can stores polymorphic object, we
  * need several {@link ObjectStorage} to support it. In such scenario,
- * {@link RMSRepositoryGroupManager} will comes in handy. </p>
+ * {@link RMSStorageGroupManager} will comes in handy. </p>
  * 
- * {@link RMSRepositoryGroupManager} will create several
+ * {@link RMSStorageGroupManager} will create several
  * {@link ObjectStorage}s with name prefixed to achieve uniquely named
  * {@link ObjectStorage}. Thus, it have two drop methods, a drop method to
  * drop specific {@link ObjectStorage}, and a dropAll method to drop all
@@ -20,13 +20,13 @@ import id.web.herlangga.badulik.definition.*;
  * @author angga
  * 
  */
-public class RMSRepositoryGroupManager implements ObjectStorageManager {
+public class RMSStorageGroupManager implements ObjectStorageManager {
 	private final String prefix;
-	private final RMSRepositoryManager repositoryManager;
+	private final RMSStorageManager repositoryManager;
 	private final Vector openedRepositoriesLog = new Vector();
 
-	public RMSRepositoryGroupManager(String prefix,
-			RMSRepositoryManager repositoryManager) {
+	public RMSStorageGroupManager(String prefix,
+			RMSStorageManager repositoryManager) {
 		this.prefix = prefix;
 		this.repositoryManager = repositoryManager;
 	}
