@@ -34,7 +34,7 @@ public interface ObjectStorage {
 	 * @param reconstitutor
 	 *            {@link ObjectReconstitutor} to be delegated the job of Object
 	 *            reconstitution.
-	 * @return Objects that matches with filter.
+	 * @return Objects match with filter.
 	 */
 	public Object[] findAll(ObjectFilter filter,
 			ObjectReconstitutor reconstitutor);
