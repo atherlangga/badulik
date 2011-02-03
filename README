@@ -1,11 +1,8 @@
 About
 -----
-
-From simplistic point of view, Badulik is an abstraction for to take care your need of serialization in Java ME platform.
+From simplistic point of view, Badulik is an abstraction for taking care the need of serialization in Java ME platform.
 
 
 Raison d'etre
 -------------
-
-I needed an abstraction library for Java ME when I worked on my final project. Being an Domain Driven Design believer, I have one simple requirement: The library must not leak into my domain classes. Sadly, none of the libraries (at the time) satisfy my requirement. It's not that those libraries are bad, but they trade sophistication for simplicity. Hence, Badulik was born.
-
+I needed an serialization library for Java ME when I worked on my final project. Being an Domain Driven Design believer, I have one simple requirement: the library must not leak into my domain classes. Sadly, none of the libraries (at the time) satisfy my requirement. It's not that those libraries are bad, but they trade sophistication for simplicity. Hence, Badulik was born.
