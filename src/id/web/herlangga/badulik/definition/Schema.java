@@ -46,6 +46,11 @@ public class Schema {
 		return !isCompatibleWith(data);
 	}
 
+	Attribute attributeOf(String attributeName) {
+		int attributeIndex = attributeNumberOf(attributeName);
+		return attributes[attributeIndex];
+	}
+	
 	int attributeNumberOf(String attributeName) {
 		int fieldLength = attributes.length;
 		for (int fieldNumber = 0; fieldNumber < fieldLength; fieldNumber++) {
@@ -56,10 +61,6 @@ public class Schema {
 		}
 
 		throw new IllegalArgumentException(attributeName + " is not exist.");
-	}
-
-	Attribute attributeOf(String attributeName) {
-		return attributes[attributeNumberOf(attributeName)];
 	}
 
 	private boolean hasSameSizeWith(Element[] elements) {
@@ -119,7 +120,7 @@ public class Schema {
 			this.types = new Vector();
 		}
 
-		public SchemaBuilder thenAddAttribute(String attributeName,
+		public SchemaBuilder addAttribute(String attributeName,
 				Datatype attributeType) {
 			if (names.contains(attributeName)) {
 				throw new IllegalArgumentException(attributeName
@@ -130,7 +131,7 @@ public class Schema {
 			return this;
 		}
 
-		public Schema thenGetResult() {
+		public Schema getResult() {
 			int attributesSize = names.size();
 			Attribute[] fields = new Attribute[attributesSize];
 			for (int i = 0; i < attributesSize; i++) {

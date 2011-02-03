@@ -11,8 +11,8 @@ public class Tuple {
 		this.elements = elements;
 	}
 
-	public static TupleBuilder buildNew() {
-		return new TupleBuilder();
+	public static TupleBuilder buildNewWithSchema(Schema schema) {
+		return new TupleBuilder(schema);
 	}
 
 	public Schema schema() {
@@ -42,30 +42,26 @@ public class Tuple {
 
 	public static class TupleBuilder {
 		private Schema schema;
-		private Vector elementsHolder;
+		private Vector elementsCache;
 
-		private TupleBuilder() {
-			this.elementsHolder = new Vector();
-		}
-
-		public TupleBuilder withSchema(Schema schema) {
+		private TupleBuilder(Schema schema) {
 			this.schema = schema;
-			return this;
+			this.elementsCache = new Vector();
 		}
 
-		public TupleBuilder thenAddField(String fieldName, Element element) {
+		public TupleBuilder addField(String fieldName, Element element) {
 			if (!schema.attributeOf(fieldName).isCompatibleWith(element)) {
 				throw new IllegalArgumentException("Element " + fieldName
 						+ " is incompatible with schema field.");
 			}
 
-			elementsHolder.addElement(element);
+			elementsCache.addElement(element);
 			return this;
 		}
 
-		public Tuple thenGetResult() {
-			Element[] elements = new Element[elementsHolder.size()];
-			elementsHolder.copyInto(elements);
+		public Tuple getResult() {
+			Element[] elements = new Element[elementsCache.size()];
+			elementsCache.copyInto(elements);
 
 			if (schema.isIncompatibleWith(elements)) {
 				throw new IllegalStateException(
